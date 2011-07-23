@@ -1,0 +1,13 @@
+.DS_Store
+._*
+/.idea/
+.livereload
+.buildpath
+.project
+.settings
+build/
+target/
+tmp/
+dump.rdb
+.ant-targets-build.xml
+node_modules/*
