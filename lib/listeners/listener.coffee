@@ -1,9 +1,9 @@
-SocketListener = require('./socket_listener').SocketListener
+TcpListener = require('./tcp_listener').TcpListener
 HttpListener = require('./http_listener').HttpListener
 
 class Listener
   @listen: ->
-    new SocketListener().listen()
+    new TcpListener().listen()
     new HttpListener().listen()
 
 exports.Listener = Listener
