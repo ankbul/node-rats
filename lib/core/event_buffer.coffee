@@ -10,19 +10,20 @@ EventSink = require('./../sinks/event_sink').EventSink
 
 class EventBuffer
 
-  @eventQueue =  async.queue(
-    (task, callback) ->
-      parsed = url.parse task.data, true
-      console.log '[EventBuffer] proccessing: ' + parsed.href
-      callback()
-    2
-  )
+  @processEvent: (event, callback) ->
+    parsed = url.parse event.data, true
+    #console.log '[EventBuffer] processing: ' + parsed.href
+    eventPacket = {data: parsed.query, time: event.time}
+    EventSink.send eventPacket
+    callback()
+
+  @eventQueue = async.queue @processEvent, 2
 
   # pushes data to async.queue as fast as possible
   @buffer: (data) ->
-    task = {data: data}
+    task = {data: data, time: new Date()}
     console.log "[EventBuffer] Incoming request: #{data}"
-    @eventQueue.push task, (err) -> console.log '[EventBuffer] processed'
+    @eventQueue.push task, (err) -> #console.log '[EventBuffer] processed'
 
 
 

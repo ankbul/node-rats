@@ -1,8 +1,31 @@
+redis = require 'redis'
+config = require('./../../config').config
+
 # AB : todo - explode into different time components
 # AB : todo - explode into
 
+
+
+
+class EventExploder
+  @explode: (path) ->
+
+
+
+class EventParser
+  @parse: (event) ->
+    times = TimeExploder.explode event.time
+
+
+
+
 class RedisSink
-  @send: (data) ->
+
+  @redisClient = redis.createClient(config.redis.port, config.redis.host)
+
+  @send: (event) ->
+    console.log
+    #console.log "[RedisSink] #{data}"
 
 
 exports.RedisSink = RedisSink
