@@ -1,4 +1,4 @@
-class TcpListener
+class TcpSource
   constructor: (@port = 7288) ->
 
   # responds as quickly as possible
@@ -6,4 +6,4 @@ class TcpListener
     console.log "[TCP] listening on port #{@port}"
 
 
-exports.TcpListener = TcpListener
+exports.TcpSource = TcpSource

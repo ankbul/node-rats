@@ -1,9 +1,12 @@
+# AB : todo - explode into different time components
+# AB : todo - explode into
 
-#class EventPipe
+class RedisSink
+  @send: (data) ->
 
-#class RedisEventPipe extends EventPipe
 
-#class FileEventPipe extends EventPipe
+exports.RedisSink = RedisSink
+
 
 
 #client = redis.createClient(config.redis.port, config.redis.host)
@@ -20,6 +23,8 @@
 #    replies.forEach((reply, i) -> console.log "#{i}: #{reply}")
 #    client.quit
 #)
+
+
 
 
 
