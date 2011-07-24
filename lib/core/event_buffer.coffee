@@ -22,9 +22,9 @@ class EventBuffer
   # pushes data to async.queue as fast as possible
   @buffer: (data) ->
     task = {data: data, time: new Date()}
-    console.log "[EventBuffer] Incoming request: #{data}"
-    @eventQueue.push task, (err) -> #console.log '[EventBuffer] processed'
-
+    if (data + '').length > 1
+      console.log "[EventBuffer] Incoming request: [#{data}]"
+      @eventQueue.push task, (err) -> #console.log '[EventBuffer] processed'
 
 
 exports.EventBuffer = EventBuffer

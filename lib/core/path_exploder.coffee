@@ -4,8 +4,9 @@ class PathExploder
     paths = []
     for dimension in dimensions
       path = "#{segment}/#{dimension}"
+      path = path.replace(/^\/+/,'') # remove trailing slash
       paths.push path
-      console.log "addDimension: #{path}"
+      #console.log "addDimension: #{path}"
     paths
 
 
@@ -29,7 +30,7 @@ class PathExploder
 
       combinatorial *= dimensions.length
 
-    console.log paths
+    #console.log paths
     paths
 
 
