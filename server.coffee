@@ -1,19 +1,11 @@
 express = require 'express'
 socket = require 'socket.io'
-
-Listener = require('./lib/listeners/listener').Listener
+config = require('./config').config
 SocketClient = require('./lib/client/socket_client').SocketClient
+EventSource = require('./lib/sources/event_source').EventSource
 
-config =
-  redis:
-    port: 6379
-    host: '127.0.0.1'
-  express:
-    port: 3000
-  socket:
-    port: 3030
 
-Listener.listen()
+EventSource.listen()
 
 
 # set up client
@@ -28,4 +20,16 @@ socketClient = new SocketClient config.socket.port
 socketClient.listen()
 
 
+#TimeExploder = require('./lib/core/time_exploder').TimeExploder
+#d = new Date()
+#console.log TimeExploder.explode d
 
+
+#PathExploder = require('./lib/core/path_exploder').PathExploder
+#console.log PathExploder.permute(['female','US','tweener'])
+#PathExploder.explode 'parent|master|cheese/foo|bar|baz/57|87|90'
+
+RedisSink = require('./lib/sinks/redis_sink').RedisSink
+#RedisSink.listEvents( (err, events) -> console.log events )
+time = new Date()
+#RedisSink.getEventData(time, () -> console.log "[Server.coffee] callback")
