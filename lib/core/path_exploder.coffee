@@ -1,5 +1,21 @@
 class PathExploder
 
+  @permuteDimensions: (dimension, dimensions) ->
+    permutations = []
+    i = 1
+    for dim in dimensions
+      permutation = "#{dimension}&#{dim}"
+      permutation = permutation.replace(/^&+/,'')
+      permutations.push permutation
+      permutations.push perm for perm in @permuteDimensions(permutation, dimensions[i..dimensions.length])
+      i += 1
+
+    permutations
+
+  @permute: (dimensions) ->
+    @permuteDimensions '', dimensions
+
+
   @addDimension: (segment, dimensions) ->
     paths = []
     for dimension in dimensions
@@ -18,6 +34,9 @@ class PathExploder
 
     for segment in segments
       dimensions = segment.split('|')
+
+      # AB : todo make this a config variable whether or not to permute automatically
+      dimensions = @permute(dimensions)
 
       # AB : book keeping
       combinatorialTally += combinatorial

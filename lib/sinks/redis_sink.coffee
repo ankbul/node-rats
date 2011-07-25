@@ -20,29 +20,59 @@ class RedisKey
 
   @metaKeys: -> @path 'meta/keys'
 
+  @paths: (paths) -> @path(path) for path in paths
+
 
 class RedisSink
 
   @redisClient = redis.createClient(config.redis.port, config.redis.host)
 
+  @listEvents: (callback) ->
+    @redisClient.smembers(RedisKey.metaKeys(), (err, events) -> callback(err, events))
+
+  @getEventData: (time, callback) ->
+    @listEvents (err, events) =>
+      #console.log events
+      timePaths = RedisKey.paths(@getTimePaths time, events)
+      console.log timePaths
+      @redisClient.mget timePaths, (err, replies) -> console.log err, replies
+
+
+  @getTimePaths: (time, paths) ->
+    times = TimeExploder.explode(time)
+    timePaths = []
+    for path in paths
+      for timeIncrement in times
+        timePaths.push "#{path}/#{timeIncrement}".replace(/^\/+/,'')
+    timePaths
+
+
+
+  @trimSlashes: (string) ->
+    string.replace(/^\/+|\/+$/g,'')
+
+
   @send: (event) ->
     bucket = event.data.b
     uid = "#{event.data.uid}"
-    times = TimeExploder.explode(event.time)
+
     paths = PathExploder.explode(event.data.e)
     testGroup = event.data.tg
     testPath = event.data.tp
 
     # build a list of increments
-    timePaths = []
-    for path in paths
-      for timeIncrement in times
-        timePaths.push "#{path}/#{timeIncrement}".replace(/^\/+/,'')
+    timePaths = @getTimePaths event.time, paths
+    #times = TimeExploder.explode(event.time)
+    #timePaths = []
+    #for path in paths
+    #  for timeIncrement in times
+    #    timePaths.push "#{path}/#{timeIncrement}".replace(/^\/+/,'')
 
-    bucketPaths = ("#{bucket}/#{path}" for path in timePaths)
+    bucketPaths = ( @trimSlashes("#{bucket}/#{path}") for path in timePaths)
 
     # build the meta list of events to add to the set
-    metaPaths = ("#{bucket}/#{path}" for path in paths)
+    # remove trail
+    metaPaths = ( @trimSlashes("#{bucket}/#{path}") for path in paths)
 
     # AB : todo we shouldn't have save this meta set everytime
     # save the meta to redis

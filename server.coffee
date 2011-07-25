@@ -16,4 +16,10 @@ EventSource.listen()
 
 
 #PathExploder = require('./lib/core/path_exploder').PathExploder
+#console.log PathExploder.permute(['female','US','tweener'])
 #PathExploder.explode 'parent|master|cheese/foo|bar|baz/57|87|90'
+
+RedisSink = require('./lib/sinks/redis_sink').RedisSink
+#RedisSink.listEvents( (err, events) -> console.log events )
+time = new Date()
+#RedisSink.getEventData(time, () -> console.log "[Server.coffee] callback")
