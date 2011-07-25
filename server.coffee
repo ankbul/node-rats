@@ -1,10 +1,8 @@
-redis = require 'redis',
-sys = require('sys'),
-http = require('http'),
-fs = require('fs'),
-express = require('express')
+express = require 'express'
+socket = require 'socket.io'
 
 Listener = require('./lib/listeners/listener').Listener
+SocketClient = require('./lib/client/socket_client').SocketClient
 
 config =
   redis:
@@ -12,6 +10,8 @@ config =
     host: '127.0.0.1'
   express:
     port: 3000
+  socket:
+    port: 3030
 
 Listener.listen()
 
@@ -23,6 +23,9 @@ app.listen(config.express.port)
 
 
 # set up websocket input
+
+socketClient = new SocketClient config.socket.port
+socketClient.listen()
 
 
 
