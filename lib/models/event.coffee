@@ -1,6 +1,8 @@
 require './../core/extensions'
 
 class Event
+  @ROOT_PATH = ''
+
   constructor: (data) ->
     @count    = data.count ? 0
     @path     = data.path ? ''

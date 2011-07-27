@@ -36,15 +36,21 @@ class RedisSink
   @redisClient = redis.createClient(config.redis.port, config.redis.host)
 
   # returns the set of known events
-  @listEvents: (callback) ->
-    @redisClient.smembers(RedisKey.metaKeys(), (err, events) -> callback(err, events))
+  @listEvents: (view, listEventsCallback) ->
+    # todo - filter view path at the redis level. right now, we're filtering after we retrieve from redis
+    @redisClient.smembers(RedisKey.metaKeys(), (err, events) =>
+      # filter events based on the view path
+      filteredEvents = (event for event in events when event.startsWith view.path)
+      listEventsCallback(err, filteredEvents)
+    )
 
 
   # returns an event view
-  @getLiveEventData: (timeSlice = TimeSlice.ONE_MINUTE, callback) ->
+  #  = new View({timeSlice: TimeSlice.ONE_MINUTE, path: Event.ROOT_PATH})
+  @getLiveEventData: (view, eventViewCallback) ->
     time = new Date()
-    @listEvents (err, eventPaths) =>
-      paths = @getTimePaths(time, timeSlice, eventPaths)
+    @listEvents view, (err, eventPaths) =>
+      paths = @getTimePaths(time, view.timeSlice, eventPaths)
       redisTimePaths = RedisKey.paths(paths.map (element) -> element.timePath)
 
       # get events from redis
@@ -55,11 +61,12 @@ class RedisSink
         for i in [0..redisTimePaths.length-1]
           events.push new Event({path: paths[i].path, count: replies[i] ? 0, redisKey: redisTimePaths[i]})
 
+
         #console.log events
-        # convert event list to event view
         eventTree = Event.buildTree events
-        eventView = new EventView(new View({timeSlice: timeSlice}), eventTree)
-        callback(eventView)
+        eventView = new EventView(view, eventTree)
+        #console.log "@getLiveEventData::listEvents", eventTree, eventView #, eventViewCallback
+        eventViewCallback(eventView)
 
 
   # returns (path, timePath)
