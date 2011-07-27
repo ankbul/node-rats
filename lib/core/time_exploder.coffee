@@ -1,22 +1,24 @@
+TimeSlice = require('./../models/time_slice').TimeSlice
+
 class TimeExploder
 
-  @explode: (time, timeSlice = 'all') ->
+  @explode: (time, timeSlice = TimeSlice.ALL) ->
     dates = []
 
-    if timeSlice == 'day' || timeSlice == 'all'
-      dates.push "day/#{@date time}"
+    if timeSlice == TimeSlice.ONE_DAY || timeSlice == 'all'
+      dates.push "#{TimeSlice.ONE_DAY}/#{@date time}"
 
-    if timeSlice == 'hour' || timeSlice == 'all'
-      dates.push "hour/#{@date time}T#{@floorHour time}"
+    if timeSlice == TimeSlice.ONE_HOUR || timeSlice == 'all'
+      dates.push "#{TimeSlice.ONE_HOUR}/#{@date time}T#{@floorHour time}"
 
-    if timeSlice == '10m' || timeSlice == 'all'
-      dates.push "10m/#{@date time}T#{@hours time}:#{@floorMinutes(time, 10)}:00"
+    if timeSlice == TimeSlice.TEN_MINUTES || timeSlice == 'all'
+      dates.push "#{TimeSlice.TEN_MINUTES}/#{@date time}T#{@hours time}:#{@floorMinutes(time, 10)}:00"
 
-    if timeSlice == '5m' || timeSlice == 'all'
-      dates.push "5m/#{@date time}T#{@hours time}:#{@floorMinutes(time, 5)}:00"
+    if timeSlice == TimeSlice.FIVE_MINUTES || timeSlice == 'all'
+      dates.push "#{TimeSlice.FIVE_MINUTES}/#{@date time}T#{@hours time}:#{@floorMinutes(time, 5)}:00"
 
-    if timeSlice == '1m' || timeSlice == 'all'
-      dates.push "1m/#{@date time}T#{@hours time}:#{@padNumber(time.getMinutes())}:00"
+    if timeSlice == TimeSlice.ONE_MINUTE || timeSlice == 'all'
+      dates.push "#{TimeSlice.ONE_MINUTE}/#{@date time}T#{@hours time}:#{@padNumber(time.getMinutes())}:00"
 
     return dates
 

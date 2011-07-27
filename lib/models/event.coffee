@@ -16,6 +16,7 @@ class Event
   # walks the tree recursively, until it can insert
   # this assumes that the object has a place in its hierarchy
   insert: (event) ->
+    #console.log "[INSERT] inserting #{event.path} into #{@path}"
     if event.path.startsWith @path
       # find the branch to traverse, bfs
       parentFound = false
@@ -23,6 +24,7 @@ class Event
         if event.path.startsWith child.path
           child.insert event
           parentFound = true
+          #break
 
       if !parentFound
         @events.push event
@@ -31,11 +33,9 @@ class Event
       console.log "[Event::insert] skipped! #{event}"
 
   print: (level = 0) ->
-    console.log "Level: #{level}, Path: #{this.path}, Name: #{this.name}"
-    for e in @events
-      level += 1
-      #console.log "Level = #{level}", e
-      e.print level
+    console.log "Level: #{level}, Path: #{@path}, Name: #{@name}, Count: #{@count}"
+    e.print level+1 for e in @events
+
 
   @extractNameFromPath: (path) ->
     segments = path.split('/')
@@ -43,9 +43,9 @@ class Event
 
 
   # builds an event tree from a flattened event list
-  @buildFromList: (eventList) ->
+  @buildTree: (eventList) ->
     root = new Event({path: '', name: ''})
-    console.log 'Event.coffee::root', root
+    #console.log 'Event.coffee::root', root
     return root if eventList.length == 0
 
     # convert to event objects
@@ -55,8 +55,10 @@ class Event
 
     # sort the events alphabetically
     events = events.sortByKey 'path'
-    console.log "[Event]", events
-    root.insert e for e in events
+    #console.log "[Event::LIST]", events
+    for e in events
+      #console.log "EVENT:INSERT #{e.path} into #{root.path}"
+      root.insert e
     return root
 
 

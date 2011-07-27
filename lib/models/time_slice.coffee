@@ -1,8 +1,9 @@
 class TimeSlice
-  @SLICE_1_MINUTE = '1m'
-  @SLICE_5_MINUTES = '5m'
-  @SLICE_10_MINUTES = '10m'
-  @SLICE_1_HOUR = 'hour'
-  @SLICE_1_DAY = 'day'
+  @ALL          = 'all'
+  @ONE_MINUTE   = '1m'
+  @FIVE_MINUTES = '5m'
+  @TEN_MINUTES  = '10m'
+  @ONE_HOUR     = '1h'
+  @ONE_DAY      = '1d'
 
 exports.TimeSlice = TimeSlice

@@ -8,6 +8,7 @@ PathExploder = require('./../core/path_exploder').PathExploder
 Event = require('./../models/event').Event
 EventView = require('./../models/event_view').EventView
 View = require('./../models/view').View
+TimeSlice = require('./../models/time_slice').TimeSlice
 
 
 
@@ -40,30 +41,25 @@ class RedisSink
 
 
   # returns an event view
-  @getLiveEventData: (timeSlice = '1m', callback) ->
+  @getLiveEventData: (timeSlice = TimeSlice.ONE_MINUTE, callback) ->
     time = new Date()
     @listEvents (err, eventPaths) =>
-      #console.log events
       paths = @getTimePaths(time, timeSlice, eventPaths)
       redisTimePaths = RedisKey.paths(paths.map (element) -> element.timePath)
 
-      #console.log timePaths
+      # get events from redis
       @redisClient.mget redisTimePaths, (err, replies) =>
 
-        # build an event list
+        # create events from the event list
         events = []
         for i in [0..redisTimePaths.length-1]
-          #console.log "#{i} = #{paths[i]}"
-          #path = (path for path in paths when path.timePath == timePaths[i])
-          # create events
-          event = new Event({path: paths[i].path, count: replies[i], redisKey: redisTimePaths[i]})
-          events.push event
+          events.push new Event({path: paths[i].path, count: replies[i] ? 0, redisKey: redisTimePaths[i]})
 
         #console.log events
         # convert event list to event view
-        eventView = new EventView(new View(), Event.buildFromList events)
-        callback(events)
-
+        eventTree = Event.buildTree events
+        eventView = new EventView(new View({timeSlice: timeSlice}), eventTree)
+        callback(eventView)
 
 
   # returns (path, timePath)
