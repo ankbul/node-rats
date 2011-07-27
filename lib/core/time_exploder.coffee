@@ -1,23 +1,24 @@
 class TimeExploder
 
-  @explode: (time) ->
+  @explode: (time, timeSlice = 'all') ->
     dates = []
-    # add today
-    dates.push "day/#{@date time}"
 
-    # add this hour
-    dates.push "hour/#{@date time}T#{@floorHour time}"
+    if timeSlice == 'day' || timeSlice == 'all'
+      dates.push "day/#{@date time}"
 
-    # add last 10 min
-    dates.push "10m/#{@date time}T#{@hours time}:#{@floorMinutes(time, 10)}:00"
+    if timeSlice == 'hour' || timeSlice == 'all'
+      dates.push "hour/#{@date time}T#{@floorHour time}"
 
-    # add last 5 min
-    dates.push "5m/#{@date time}T#{@hours time}:#{@floorMinutes(time, 5)}:00"
+    if timeSlice == '10m' || timeSlice == 'all'
+      dates.push "10m/#{@date time}T#{@hours time}:#{@floorMinutes(time, 10)}:00"
 
-    # add last 1 min
-    dates.push "1m/#{@date time}T#{@hours time}:#{@padNumber(time.getMinutes())}:00"
+    if timeSlice == '5m' || timeSlice == 'all'
+      dates.push "5m/#{@date time}T#{@hours time}:#{@floorMinutes(time, 5)}:00"
 
-    dates
+    if timeSlice == '1m' || timeSlice == 'all'
+      dates.push "1m/#{@date time}T#{@hours time}:#{@padNumber(time.getMinutes())}:00"
+
+    return dates
 
 
   @padNumber: (number) ->
