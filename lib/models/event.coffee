@@ -46,7 +46,7 @@ class Event
 
 
   # builds an event tree from a flattened event list
-  @buildTree: (eventList) ->
+  @buildTree: (path, eventList) ->
     root = new Event({path: '', name: ''})
     #console.log 'Event.coffee::root', root
     return root if eventList.length == 0
@@ -62,7 +62,10 @@ class Event
     for e in events
       #console.log "EVENT:INSERT #{e.path} into #{root.path}"
       root.insert e
-    return root
+
+    return root if path == Event.ROOT_PATH
+
+    return root.events[0]
 
 
 exports.Event = Event

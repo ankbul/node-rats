@@ -76,7 +76,7 @@ class RedisSink
         for i in [0..redisTimePaths.length-1]
           events.push new Event({path: paths[i].path, count: replies[i] ? 0, redisKey: redisTimePaths[i]})
 
-        eventTree = Event.buildTree events
+        eventTree = Event.buildTree view.path, events
         eventView = new EventView(view, eventTree)
         eventViewCallback(eventView)
 
