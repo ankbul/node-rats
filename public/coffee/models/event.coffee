@@ -31,6 +31,29 @@ class REvent
 
     return data
 
+  getEvent: (path) ->
+    for event in @events
+      if event.path == path
+        return event
+    return null
+
+  update: (data) ->
+    @count = data.count || 0
+    @name   = data.name || ''
+    @path   = data.path || ''
+    if !data.events
+      @events = []
+      return
+
+    for newEventData in data.events
+      ev = @getEvent newEventData.path
+
+      if ev == null
+        @events.push new REvent(newEventData)
+      else
+        ev.update(newEventData)
+
+
 
 window.REvent = REvent
 

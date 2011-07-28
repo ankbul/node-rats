@@ -1,48 +1,62 @@
 socket = require 'socket.io'
 
 data = {
+  view : {
+    path : '',
+    type : 'live',
+    interval : '1m'
+  },
+
   events : [{
     name: 'wallpost',
     count: 1100+50,
-    path : 'rats://wallpost',
+    path : 'wallpost',
+    redisPath : 'rats://wallpost',
     depth : 3
     events: [
       {
         name: 'tf',
         count : 800 + 40,
-        path : 'rats://wallpost/tf'
+        path : 'wallpost/tf'
+        redisPath : 'rats://wallpost/tf'
         events : [
           {
             name: 'clicked',
             count : 500 ,
-            path : 'rats://wallpost/tf/clicked'
+            path : 'wallpost/tf/clicked'
+            redisPath : 'rats://wallpost/tf/clicked'
           },
           {
             name : 'published',
             count : 200,
-            path : 'rats://wallpost/tf/published'
+            path : 'wallpost/tf/published'
+            redisPath : 'rats://wallpost/tf/published'
           },
           {
             name : 'rescheduled',
             count : 100,
-            path : 'rats://wallpost/tf/rescheduled'
+            path : 'wallpost/tf/rescheduled'
+            redisPath : 'rats://wallpost/tf/rescheduled'
           }
         ]
       },
       {
         name: 'mf',
         count : 300,
-        path : 'rats://wallpost/mf'
+        path : 'wallpost/mf'
+        redisPath : 'rats://wallpost/mf'
         events : [
           {
             name: 'clicked',
             count : 50,
-            path : 'rats://wallpost/mf/clicked'
+            path : 'wallpost/mf/clicked'
+            redisPath : 'rats://wallpost/mf/clicked'
           },
           {
             name : 'published',
             count : 250,
-            path : 'rats://wallpost/mf/published'
+            path : 'wallpost/mf/published'
+            redisPath : 'rats://wallpost/mf/published'
           }
         ]
       }
@@ -58,7 +72,6 @@ class SocketClient
     console.log "[SOCKET.IO] listening on port #{@port}"
     @io = socket.listen(@port)
     @io.sockets.on 'connection', (socket) ->
-      console.log(socket);
 
 
 
@@ -76,6 +89,6 @@ class SocketClient
 
       console.log 'sending data'
       @io.sockets.emit 'events', data
-    , 500
+    , 2500
 
 exports.SocketClient = SocketClient
