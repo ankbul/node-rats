@@ -41,6 +41,35 @@
       }
       return data;
     };
+    REvent.prototype.getEvent = function(path) {
+      var event, _i, _len, _ref;
+      _ref = this.events;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        event = _ref[_i];
+        if (event.path === path) {
+          return event;
+        }
+      }
+      return null;
+    };
+    REvent.prototype.update = function(data) {
+      var ev, newEventData, _i, _len, _ref, _results;
+      this.count = data.count || 0;
+      this.name = data.name || '';
+      this.path = data.path || '';
+      if (!data.events) {
+        this.events = [];
+        return;
+      }
+      _ref = data.events;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        newEventData = _ref[_i];
+        ev = this.getEvent(newEventData.path);
+        _results.push(ev === null ? this.events.push(new REvent(newEventData)) : ev.update(newEventData));
+      }
+      return _results;
+    };
     return REvent;
   })();
   window.REvent = REvent;
