@@ -9,6 +9,7 @@ class Event
     @name = data.name ? Event.extractNameFromPath @path
     @redisKey = data.redisKey ? ''
     @events   = []
+    @measurements = []
 
     if data.events
       for event in data.events

@@ -14,34 +14,38 @@ class TimeExploder
       else 1
 
 
-  @explodeHistorically: (time, timeSlice, measurements) ->
+  @explode: (time, timeSlice, measurements = 1) ->
     datePaths = []
     times = []
 
     for i in [0..measurements-1]
       times.push new Date(time - i*TimeExploder.MILLISECONDS_PER_MINUTE*TimeExploder.getMinuteMultiplier(timeSlice))
 
-    datePaths.push @explode(t, timeSlice)[0] for t in times
+    for t in times
+      explosions = @calculateTimeSlice(t, timeSlice)
+      for explosion in explosions
+        datePaths.push explosion
+
     return datePaths
 
 
-  @explode: (time, timeSlice = TimeSlice.ALL) ->
+  @calculateTimeSlice: (time, timeSlice = TimeSlice.ALL) ->
     dates = []
 
     if timeSlice == TimeSlice.ONE_MINUTE || timeSlice == 'all'
-      dates.push "#{TimeSlice.ONE_MINUTE}/#{@date time} #{@hours time}:#{@padNumber(time.getMinutes())}:00"
+      dates.push [TimeSlice.ONE_MINUTE, "#{@date time} #{@hours time}:#{@padNumber(time.getMinutes())}:00"]
 
     if timeSlice == TimeSlice.FIVE_MINUTES || timeSlice == 'all'
-      dates.push "#{TimeSlice.FIVE_MINUTES}/#{@date time} #{@hours time}:#{@floorMinutes(time, 5)}:00"
+      dates.push [TimeSlice.FIVE_MINUTES, "#{@date time} #{@hours time}:#{@floorMinutes(time, 5)}:00"]
 
     if timeSlice == TimeSlice.TEN_MINUTES || timeSlice == 'all'
-      dates.push "#{TimeSlice.TEN_MINUTES}/#{@date time} #{@hours time}:#{@floorMinutes(time, 10)}:00"
+      dates.push [TimeSlice.TEN_MINUTES, "#{@date time} #{@hours time}:#{@floorMinutes(time, 10)}:00"]
 
     if timeSlice == TimeSlice.ONE_HOUR || timeSlice == 'all'
-      dates.push "#{TimeSlice.ONE_HOUR}/#{@date time} #{@floorHour time}"
+      dates.push [TimeSlice.ONE_HOUR, "#{@date time} #{@floorHour time}"]
 
     if timeSlice == TimeSlice.ONE_DAY || timeSlice == 'all'
-      dates.push "#{TimeSlice.ONE_DAY}/#{@date time}"
+      dates.push [TimeSlice.ONE_DAY, "#{@date time}"]
 
     return dates
 

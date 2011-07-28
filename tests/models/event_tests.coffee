@@ -15,7 +15,7 @@ module.exports = testCase({
     root.insert(popchatlogin)
 
   eventTreeTest: (test) ->
-    eventTree = Event.buildFromList ['popchat/login/new','popchat','wallpost','wallpost/tf/published','popchat/login','wallpost/tf']
+    eventTree = Event.buildTree ['popchat/login/new','popchat','wallpost','wallpost/tf/published','popchat/login','wallpost/tf']
     console.log JSON.stringify eventTree
 
 })

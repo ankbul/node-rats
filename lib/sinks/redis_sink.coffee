@@ -7,16 +7,9 @@ PathExploder = require('./../core/path_exploder').PathExploder
 
 Event = require('./../models/event').Event
 EventView = require('./../models/event_view').EventView
+EventListView = require('./../models/event_list_view').EventListView
 View = require('./../models/view').View
 TimeSlice = require('./../models/time_slice').TimeSlice
-
-
-
-# AB : todo - expire keys
-
-class EventParser
-  @parse: (event) ->
-    times = TimeExploder.explode event.time
 
 
 class RedisKey
@@ -44,6 +37,28 @@ class RedisSink
       listEventsCallback(err, filteredEvents)
     )
 
+  @getHistoricalEventData: (view, eventListViewCallback) ->
+    time = new Date()
+    @listEvents view, (err, eventPaths) =>
+      paths = @getTimePaths(time, view.timeSlice, eventPaths, view.measurements)
+      redisTimePaths = RedisKey.paths(paths.map (element) -> element.timePath)
+
+      # get events from redis
+      @redisClient.mget redisTimePaths, (err, replies) =>
+        # create events from the event list
+
+        events = []
+        currentEvent = null
+        currentPath = ''
+        for i in [0..redisTimePaths.length-1]
+          if currentPath != paths[i].path
+            currentPath = paths[i].path
+            currentEvent = new Event({})
+            events.push [paths[i].time, replies[i] ? 0]
+
+        eventListView = new EventListView(view, events)
+        eventListViewCallback(eventListView)
+
 
   # returns an event view
   #  = new View({timeSlice: TimeSlice.ONE_MINUTE, path: Event.ROOT_PATH})
@@ -61,21 +76,18 @@ class RedisSink
         for i in [0..redisTimePaths.length-1]
           events.push new Event({path: paths[i].path, count: replies[i] ? 0, redisKey: redisTimePaths[i]})
 
-
-        #console.log events
         eventTree = Event.buildTree events
         eventView = new EventView(view, eventTree)
-        #console.log "@getLiveEventData::listEvents", eventTree, eventView #, eventViewCallback
         eventViewCallback(eventView)
 
 
   # returns (path, timePath)
-  @getTimePaths: (time, timeSlice, paths) ->
-    times = TimeExploder.explode(time, timeSlice)
+  @getTimePaths: (time, timeSlice, paths, measurements = 1) ->
+    times = TimeExploder.explode(time, timeSlice, measurements)
     timePaths = []
     for path in paths
-      for timeIncrement in times
-        timePaths.push {path: path, timePath: @trimSlashes("#{path}/#{timeIncrement}") }
+      for [slice, time] in times
+        timePaths.push {path: path, time: time, timeSlice: slice, timePath: @trimSlashes("#{path}/#{slice}/#{time}") }
     timePaths
 
 
