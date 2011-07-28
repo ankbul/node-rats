@@ -1,14 +1,15 @@
+require('./../core/extensions')
 redis = require 'redis'
 config = require('./../../config').config
 
 TimeExploder = require('./../core/time_exploder').TimeExploder
 PathExploder = require('./../core/path_exploder').PathExploder
 
-# AB : todo - expire keys
-
-class EventParser
-  @parse: (event) ->
-    times = TimeExploder.explode event.time
+Event = require('./../models/event').Event
+EventView = require('./../models/event_view').EventView
+EventListView = require('./../models/event_list_view').EventListView
+View = require('./../models/view').View
+TimeSlice = require('./../models/time_slice').TimeSlice
 
 
 class RedisKey
@@ -27,29 +28,70 @@ class RedisSink
 
   @redisClient = redis.createClient(config.redis.port, config.redis.host)
 
-  @listEvents: (callback) ->
-    @redisClient.smembers(RedisKey.metaKeys(), (err, events) -> callback(err, events))
+  # returns the set of known events
+  @listEvents: (view, listEventsCallback) ->
+    # todo - filter view path at the redis level. right now, we're filtering after we retrieve from redis
+    @redisClient.smembers(RedisKey.metaKeys(), (err, events) =>
+      # filter events based on the view path
+      filteredEvents = (event for event in events when event.startsWith view.path)
+      listEventsCallback(err, filteredEvents)
+    )
 
-  @getEventData: (time, callback) ->
-    @listEvents (err, events) =>
-      #console.log events
-      timePaths = RedisKey.paths(@getTimePaths time, events)
-      console.log timePaths
-      @redisClient.mget timePaths, (err, replies) -> console.log err, replies
+  @getHistoricalEventData: (view, eventListViewCallback) ->
+    time = new Date()
+    @listEvents view, (err, eventPaths) =>
+      paths = @getTimePaths(time, view.timeSlice, eventPaths, view.measurements)
+      redisTimePaths = RedisKey.paths(paths.map (element) -> element.timePath)
+
+      # get events from redis
+      @redisClient.mget redisTimePaths, (err, replies) =>
+        # create events from the event list
+
+        events = []
+        currentEvent = null
+        currentPath = ''
+        for i in [0..redisTimePaths.length-1]
+          if currentPath != paths[i].path
+            currentPath = paths[i].path
+            currentEvent = new Event({})
+            events.push [paths[i].time, replies[i] ? 0]
+
+        eventListView = new EventListView(view, events)
+        eventListViewCallback(eventListView)
 
 
-  @getTimePaths: (time, paths) ->
-    times = TimeExploder.explode(time)
+  # returns an event view
+  #  = new View({timeSlice: TimeSlice.ONE_MINUTE, path: Event.ROOT_PATH})
+  @getLiveEventData: (view, eventViewCallback) ->
+    time = new Date()
+    @listEvents view, (err, eventPaths) =>
+      paths = @getTimePaths(time, view.timeSlice, eventPaths)
+      redisTimePaths = RedisKey.paths(paths.map (element) -> element.timePath)
+
+      # get events from redis
+      @redisClient.mget redisTimePaths, (err, replies) =>
+
+        # create events from the event list
+        events = []
+        for i in [0..redisTimePaths.length-1]
+          events.push new Event({path: paths[i].path, count: replies[i] ? 0, redisKey: redisTimePaths[i]})
+
+        eventTree = Event.buildTree events
+        eventView = new EventView(view, eventTree)
+        eventViewCallback(eventView)
+
+
+  # returns (path, timePath)
+  @getTimePaths: (time, timeSlice, paths, measurements = 1) ->
+    times = TimeExploder.explode(time, timeSlice, measurements)
     timePaths = []
     for path in paths
-      for timeIncrement in times
-        timePaths.push "#{path}/#{timeIncrement}".replace(/^\/+/,'')
+      for [slice, time] in times
+        timePaths.push {path: path, time: time, timeSlice: slice, timePath: @trimSlashes("#{path}/#{slice}/#{time}") }
     timePaths
 
 
-
-  @trimSlashes: (string) ->
-    string.replace(/^\/+|\/+$/g,'')
+  @trimSlashes: (string) -> string.replace(/^\/+|\/+$/g,'')
 
 
   @send: (event) ->
@@ -61,7 +103,7 @@ class RedisSink
     testPath = event.data.tp
 
     # build a list of increments
-    timePaths = @getTimePaths event.time, paths
+    timePaths = (@getTimePaths event.time, 'all', paths).map (element) -> element.timePath
     #times = TimeExploder.explode(event.time)
     #timePaths = []
     #for path in paths
