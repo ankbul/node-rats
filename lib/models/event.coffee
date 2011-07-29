@@ -4,12 +4,13 @@ class Event
   @ROOT_PATH = ''
 
   constructor: (data) ->
-    @count    = data.count ? 0
-    @path     = data.path ? ''
-    @name = data.name ? Event.extractNameFromPath @path
-    @redisKey = data.redisKey ? ''
-    @events   = []
-    @measurements = []
+    @count          = data.count ? 0
+    @previousCount  = data.previousCount ? 0
+    @path           = data.path ? ''
+    @name           = data.name ? Event.extractNameFromPath @path
+    @redisKey       = data.redisKey ? ''
+    @events         = []
+    @measurements   = []
 
     if data.events
       for event in data.events

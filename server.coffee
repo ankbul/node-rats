@@ -52,15 +52,18 @@ if true
   RedisSink = require('./lib/sinks/redis_sink').RedisSink
 
   if false
-    RedisSink.getLiveEventData(new View({timeSlice: TimeSlice.ONE_DAY, path:'popchat/login'}), (eventView) ->
-      console.log '[Server.coffee]', eventView
+    RedisSink.getLiveEventData(new View({timeSlice: TimeSlice.ONE_DAY, path:'popchat'}), (eventView) ->
+      console.log '[Server.coffee]', eventView, '!!!!!!!!!!!!!!!!', eventView.eventTree.events
       eventView.eventTree.print()
     )
 
-  historicalView = new View({timeSlice: TimeSlice.ONE_MINUTE, path:'popchat/login', type: 'historical', measurements: 40})
-  RedisSink.getHistoricalEventData(historicalView, (eventView) ->
-    console.log '[Server.coffee]', eventView
-  )
+  if true
+    historicalView = new View({timeSlice: TimeSlice.FIVE_SECONDS, path:'popchat', type: 'historical', measurements: 20})
+    RedisSink.getHistoricalEventData(historicalView, (eventView) ->
+      console.log '[Server.coffee]', eventView
+      for event in eventView.eventList
+        console.log event.measurements
+    )
 
 
 

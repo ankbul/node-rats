@@ -13,6 +13,10 @@ class EventBuffer
   @processEvent: (event, callback) ->
     parsed = url.parse event.data, true
     #console.log '[EventBuffer] processing: ' + parsed.href
+    if event.data == '/favicon.ico'
+      console.log '[EventBuffer] favicon.ico request ignored'
+      return
+
     eventPacket = {data: parsed.query, time: event.time}
     EventSink.send eventPacket
     callback()

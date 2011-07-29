@@ -29,6 +29,7 @@ class RedisSink
   @redisClient = redis.createClient(config.redis.port, config.redis.host)
 
   # returns the set of known events
+  # todo - include a depth level
   @listEvents: (view, listEventsCallback) ->
     # todo - filter view path at the redis level. right now, we're filtering after we retrieve from redis
     @redisClient.smembers(RedisKey.metaKeys(), (err, events) =>
@@ -40,8 +41,15 @@ class RedisSink
   @getHistoricalEventData: (view, eventListViewCallback) ->
     time = new Date()
     @listEvents view, (err, eventPaths) =>
+      # no events, no historical data
+      if eventPaths.length == 0
+        eventListViewCallback(new EventListView(view, []))
+        return
+
       paths = @getTimePaths(time, view.timeSlice, eventPaths, view.measurements)
+      console.log '[getHistoricalEventData::paths]', paths
       redisTimePaths = RedisKey.paths(paths.map (element) -> element.timePath)
+      console.log '[getHistoricalEventData::redisTimePaths]', redisTimePaths
 
       # get events from redis
       @redisClient.mget redisTimePaths, (err, replies) =>
@@ -51,10 +59,15 @@ class RedisSink
         currentEvent = null
         currentPath = ''
         for i in [0..redisTimePaths.length-1]
+          console.log 'here'
           if currentPath != paths[i].path
             currentPath = paths[i].path
-            currentEvent = new Event({})
-            events.push [paths[i].time, replies[i] ? 0]
+            currentEvent = new Event({path: paths[i].path})
+            events.push currentEvent
+
+          currentEvent.measurements.push [paths[i].time, replies[i] ? 0]
+          #events.push [paths[i].path,
+
 
         eventListView = new EventListView(view, events)
         eventListViewCallback(eventListView)
