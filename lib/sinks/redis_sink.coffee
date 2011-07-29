@@ -59,7 +59,7 @@ class RedisSink
         currentEvent = null
         currentPath = ''
         for i in [0..redisTimePaths.length-1]
-          console.log 'here'
+          #console.log 'here'
           if currentPath != paths[i].path
             currentPath = paths[i].path
             currentEvent = new Event({path: paths[i].path})
