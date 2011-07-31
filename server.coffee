@@ -23,35 +23,20 @@ socketManager = new SocketManager config.socket.port
 socketManager.listen()
 
 
-
 Event = require('./lib/models/event').Event
 
-#root = new Event({path: '', name: 'root'})
-#popchat = new Event({path: 'popchat', name: 'popchat'})
-#root.insert popchat
-#popchatlogin = new Event({path:'popchat/login', name:'login'})
-#root.insert popchatlogin
-#popchatloginnew = new Event({path:'popchat/login/new', name:'new'})
-#root.insert popchatloginnew
-#eventList = [popchat, popchatlogin, popchatloginnew]
-#console.log '[Server.coffee]', Event.buildFromList eventList
 
-
-#TimeExploder = require('./lib/core/time_exploder').TimeExploder
-#d = new Date()
-#console.log TimeExploder.explode d, TimeSlice.ONE_MINUTE, 10
-
-
-if false
+# testing
+if true
 
   RedisSink = require('./lib/sinks/redis_sink').RedisSink
 
-  if false
+  if true
     #RedisSink.getLiveEventData(new View({timeSlice: TimeSlice.ONE_DAY, path:'popchat'}), (eventView) ->
     #  console.log '[Server.coffee]', eventView, '!!!!!!!!!!!!!!!!', eventView.eventTree.events
     #  eventView.eventTree.print()
     #)
-    RedisSink.getLiveEventData(new View({timeSlice: TimeSlice.ONE_DAY, path: 'popchat/login'}), (eventView) ->
+    RedisSink.getLiveEventData(new View({timeSlice: TimeSlice.ONE_DAY, path: 'popchat'}), (eventView) ->
       console.log '[Server.coffee]', eventView, '!!!!!!!!!!!!!!!!', eventView.eventTree.events
       eventView.eventTree.print()
     )

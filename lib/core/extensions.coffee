@@ -3,6 +3,7 @@ String.prototype.startsWith = (str) -> return this.indexOf(str) == 0
 String.prototype.endsWith = (str) -> return this.lastIndexOf(str) == this.length - 1
 String.prototype.empty = (str) -> return this.length == 0
 String.prototype.trimSlashes = () -> return this.replace(/^\/+|\/+$/g,'')
+String.prototype.stringCount = (str) -> return this.split(str).length
 
 String.prototype.surround = (enclosure) ->
   temp = "#{this}"

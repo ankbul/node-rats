@@ -30,10 +30,13 @@ class RedisSink
   @redisClient = redis.createClient(config.redis.port, config.redis.host)
 
   # returns the set of known events
-  # todo - include a depth level
-  @listEvents: (view, listEventsCallback, depth = null) ->
-    # todo - filter view path at the redis level. right now, we're filtering after we retrieve from redis
-    @redisClient.smembers(RedisKey.metaKeys(), (err, events) =>
+  # AB todo - use the in-memory tree, rather than from redis
+  @listEvents: (view, depth, listEventsCallback) ->
+    currentDepth = Path.getDepth view.path
+
+    @redisClient.zrange(RedisKey.metaKeys(), currentDepth, currentDepth + depth, (err, events) =>
+      throw new Error(err) if err
+      console.log '[listEvents]', events
       # filter events based on the view path
       filteredEvents = (event for event in events when event.startsWith view.path)
       listEventsCallback(err, filteredEvents)
@@ -41,7 +44,7 @@ class RedisSink
 
   @getHistoricalEventData: (view, eventListViewCallback) ->
     time = new Date()
-    @listEvents view, (err, eventPaths) =>
+    @listEvents view, 1, (err, eventPaths) =>
       # no events, no historical data
       if eventPaths.length == 0
         eventListViewCallback(new EventListView(view, []))
@@ -60,15 +63,12 @@ class RedisSink
         currentEvent = null
         currentPath = ''
         for i in [0..redisTimePaths.length-1]
-          #console.log 'here'
           if currentPath != paths[i].path
             currentPath = paths[i].path
             currentEvent = new Event({path: paths[i].path})
             events.push currentEvent
 
           currentEvent.measurements.push [paths[i].time, replies[i] ? 0]
-          #events.push [paths[i].path,
-
 
         eventListView = new EventListView(view, events)
         eventListViewCallback(eventListView)
@@ -78,7 +78,7 @@ class RedisSink
   #  = new View({timeSlice: TimeSlice.ONE_MINUTE, path: Event.ROOT_PATH})
   @getLiveEventData2: (view, eventViewCallback) ->
     time = new Date()
-    @listEvents view, (err, eventPaths) =>
+    @listEvents view, Event.MAX_DEPTH, (err, eventPaths) =>
       smallerTimeSlice = TimeExploder.convertToSmallerTimeIncrement view.timeSlice
       paths = @getTimePaths(time, view.timeSlice, eventPaths)
       redisTimePaths = RedisKey.paths(paths.map (element) -> element.timePath)
@@ -101,7 +101,7 @@ class RedisSink
   @getLiveEventData: (view, eventViewCallback) ->
     #console.log "[RedisSink::getLiveEventData]"
     time = new Date()
-    @listEvents view, (err, eventPaths) =>
+    @listEvents view, 1, (err, eventPaths) =>
       if eventPaths.length == 0
         eventViewCallback(new EventView(view, new Event {}))
         return
@@ -126,43 +126,47 @@ class RedisSink
 
 
   # returns (path, timePath)
+  # paths are an array of {path: , depth: } hashes
   @getTimePaths: (time, timeSlice, paths, measurements = 1) ->
     times = TimeExploder.explode(time, timeSlice, measurements)
     timePaths = []
     for path in paths
       for [slice, time] in times
+        p = path.path ? path
         timePaths.push {
-          path: path, time: time,
+          path: p, time: time,
           timeSlice: slice,
-          timePath: Path.sanitize("#{path}/#{slice}/#{time}".surround(Event.PATH_SEPARATOR))
+          timePath: Path.sanitize("#{p}/#{slice}/#{time}".surround(Event.PATH_SEPARATOR))
         }
     timePaths
 
   @send: (event) ->
-    bucket = event.data.b
+    # todo - have a class to represent this stuff
+    #bucket = event.data.b
     uid = "#{event.data.uid}"
-
-    paths = PathExploder.explode(event.data.e)
-    testGroup = event.data.tg
+    test = event.data.t
     testPath = event.data.tp
+    funnel = event.data.f
+    funnelStep = event.data.fs
+    paths = PathExploder.explode(event.data.e)
+
+    # build the meta list of events to add to the set
+    # remove trail
+    # AB : todo - shouldn't be doing path manipulation here
+    # AB : todo we shouldn't have save this meta set every time
+    # save the meta to redis
+    #metaPaths = ( Path.sanitize("#{bucket}#{path}".surround(Event.PATH_SEPARATOR)) for path in paths)
+    #@redisClient.sadd(RedisKey.metaKeys(), metaPath) for metaPath in metaPaths
+    @redisClient.zadd(RedisKey.metaKeys(), path.depth, path.path) for path in paths #when path.depth > 0
 
     # build a list of increments
     timePaths = (@getTimePaths event.time, 'all', paths).map (element) -> element.timePath
 
     # AB : todo - shouldn't be doing path manipulation here
-    bucketPaths = ( Path.sanitize("#{bucket}#{path}".surround(Event.PATH_SEPARATOR)) for path in timePaths)
-
-    # build the meta list of events to add to the set
-    # remove trail
-    # AB : todo - shouldn't be doing path manipulation here
-    metaPaths = ( Path.sanitize("#{bucket}#{path}".surround(Event.PATH_SEPARATOR)) for path in paths)
-
-    # AB : todo we shouldn't have save this meta set every time
-    # save the meta to redis
-    @redisClient.sadd(RedisKey.metaKeys(), metaPath) for metaPath in metaPaths
-
     # save the increments to redis
-    @redisClient.incrby(RedisKey.path(bucketPath), 1) for bucketPath in bucketPaths
+    #bucketPaths = ( Path.sanitize("#{bucket}#{path}".surround(Event.PATH_SEPARATOR)) for path in timePaths)
+    #@redisClient.incrby(RedisKey.path(bucketPath), 1) for bucketPath in bucketPaths
+    @redisClient.incrby(RedisKey.path(timePath), 1) for timePath in timePaths
 
 
     # build the distribution numbers
@@ -171,24 +175,4 @@ class RedisSink
 
 
 exports.RedisSink = RedisSink
-
-
-
-#client = redis.createClient(config.redis.port, config.redis.host)
-#client.on('error', (err) -> console.log "Error " + err )
-
-#client.set 'string key2', 'string val', redis.print
-#client.hset 'hash key', 'hashtest 2', "some value", redis.print
-#client.hset ['hash key', 'hashtest 2', 'some other value'], redis.print
-#client.hgetall 'hash key', redis.print
-
-#client.hkeys('hash key', (err, replies) ->
-#    console.log "#{replies.length} replies:"
-#    replies.forEach((reply, i) -> console.log "#{i}: #{reply}")
-#    client.quit
-#)
-
-
-
-
 

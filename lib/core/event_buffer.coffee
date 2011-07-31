@@ -6,7 +6,7 @@ EventSink = require('./../sinks/event_sink').EventSink
 # AB: todo - use event emitter to decouple / async the process of event buffering from the listener
 # AB: todo - make concurrency configurable
 # AB: todo - how to ensure that the event buffer doesn't overtake the main processing pipeline
-# AB: todo - make this a background job
+# AB: todo - make this a period background job?
 
 class EventBuffer
 
@@ -23,7 +23,7 @@ class EventBuffer
 
   @eventQueue = async.queue @processEvent, 2
 
-  # pushes data to async.queue as fast as possible
+  # pushes data to async.queue
   @buffer: (data) ->
     task = {data: data, time: new Date()}
     if (data + '').length > 1
