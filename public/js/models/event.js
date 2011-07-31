@@ -1,16 +1,18 @@
 (function() {
   var REvent;
   REvent = (function() {
-    function REvent(data) {
-      var ev, _i, _len, _ref;
-      this.count = data.count || 0;
-      this.name = data.name || '';
-      this.path = data.path || '';
+    function REvent(data, color) {
+      var ev, _i, _len, _ref, _ref2, _ref3, _ref4, _ref5;
+      this.count = (_ref = data.count) != null ? _ref : 0;
+      this.name = (_ref2 = data.name) != null ? _ref2 : '';
+      this.path = (_ref3 = data.path) != null ? _ref3 : '';
+      this.color = color != null ? color : 'red';
+      this.measurements = (_ref4 = data.measurements) != null ? _ref4 : [];
       this.events = [];
       if (data.events) {
-        _ref = data.events;
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          ev = _ref[_i];
+        _ref5 = data.events;
+        for (_i = 0, _len = _ref5.length; _i < _len; _i++) {
+          ev = _ref5[_i];
           this.events.push(new REvent(ev));
         }
       }
@@ -53,18 +55,19 @@
       return null;
     };
     REvent.prototype.update = function(data) {
-      var ev, newEventData, _i, _len, _ref, _results;
+      var ev, newEventData, _i, _len, _ref, _ref2, _results;
       this.count = data.count || 0;
       this.name = data.name || '';
       this.path = data.path || '';
+      this.measurements = (_ref = data.measurements) != null ? _ref : [];
       if (!data.events) {
         this.events = [];
         return;
       }
-      _ref = data.events;
+      _ref2 = data.events;
       _results = [];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        newEventData = _ref[_i];
+      for (_i = 0, _len = _ref2.length; _i < _len; _i++) {
+        newEventData = _ref2[_i];
         ev = this.getEvent(newEventData.path);
         _results.push(ev === null ? this.events.push(new REvent(newEventData)) : ev.update(newEventData));
       }

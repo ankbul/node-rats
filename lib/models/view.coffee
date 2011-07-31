@@ -1,4 +1,5 @@
 TimeSlice = require('./time_slice').TimeSlice
+Event     = require('./event').Event
 
 class View
 

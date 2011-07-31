@@ -47,9 +47,9 @@ class RedisSink
         return
 
       paths = @getTimePaths(time, view.timeSlice, eventPaths, view.measurements)
-      console.log '[getHistoricalEventData::paths]', paths
+      #console.log '[getHistoricalEventData::paths]', paths
       redisTimePaths = RedisKey.paths(paths.map (element) -> element.timePath)
-      console.log '[getHistoricalEventData::redisTimePaths]', redisTimePaths
+      #console.log '[getHistoricalEventData::redisTimePaths]', redisTimePaths
 
       # get events from redis
       @redisClient.mget redisTimePaths, (err, replies) =>
