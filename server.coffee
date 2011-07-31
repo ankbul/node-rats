@@ -24,11 +24,6 @@ socketClient = new SocketClient config.socket.port
 
 
 
-
-#PathExploder = require('./lib/core/path_exploder').PathExploder
-#console.log PathExploder.permute(['female','US','tweener'])
-#PathExploder.explode 'parent|master|cheese/foo|bar|baz/57|87|90'
-
 Event = require('./lib/models/event').Event
 
 #root = new Event({path: '', name: 'root'})
@@ -52,13 +47,17 @@ if true
   RedisSink = require('./lib/sinks/redis_sink').RedisSink
 
   if false
-    RedisSink.getLiveEventData(new View({timeSlice: TimeSlice.ONE_DAY, path:'popchat'}), (eventView) ->
+    #RedisSink.getLiveEventData(new View({timeSlice: TimeSlice.ONE_DAY, path:'popchat'}), (eventView) ->
+    #  console.log '[Server.coffee]', eventView, '!!!!!!!!!!!!!!!!', eventView.eventTree.events
+    #  eventView.eventTree.print()
+    #)
+    RedisSink.getLiveEventData(new View({timeSlice: TimeSlice.ONE_DAY, path: 'popchat/login'}), (eventView) ->
       console.log '[Server.coffee]', eventView, '!!!!!!!!!!!!!!!!', eventView.eventTree.events
       eventView.eventTree.print()
     )
 
   if true
-    historicalView = new View({timeSlice: TimeSlice.FIVE_SECONDS, path:'popchat', type: 'historical', measurements: 20})
+    historicalView = new View({timeSlice: TimeSlice.TEN_MINUTES, path:'popchat', type: 'historical', measurements: 20})
     RedisSink.getHistoricalEventData(historicalView, (eventView) ->
       console.log '[Server.coffee]', eventView
       for event in eventView.eventList

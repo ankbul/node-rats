@@ -11,6 +11,8 @@ class TimeExploder
       when TimeSlice.ONE_MINUTE then TimeSlice.FIVE_SECONDS
       when TimeSlice.FIVE_MINUTES then TimeSlice.ONE_MINUTE
       when TimeSlice.TEN_MINUTES then TimeSlice.ONE_MINUTE
+      when TimeSlice.ONE_HOUR then TimeSlice.TEN_MINUTES
+      when TimeSlice.ONE_DAY then TimeSlice.ONE_HOUR
 
 
   @getSecondMultiplier: (timeSlice) ->
@@ -61,8 +63,8 @@ class TimeExploder
     if timeSlice == TimeSlice.ONE_MINUTE || timeSlice == 'all'
       dates.push [TimeSlice.ONE_MINUTE, "#{@date time} #{@hours time}:#{@padNumber(time.getMinutes())}:00"]
 
-    if timeSlice == TimeSlice.FIVE_MINUTES || timeSlice == 'all'
-      dates.push [TimeSlice.FIVE_MINUTES, "#{@date time} #{@hours time}:#{@floorMinutes(time, 5)}:00"]
+    #if timeSlice == TimeSlice.FIVE_MINUTES || timeSlice == 'all'
+    #  dates.push [TimeSlice.FIVE_MINUTES, "#{@date time} #{@hours time}:#{@floorMinutes(time, 5)}:00"]
 
     if timeSlice == TimeSlice.TEN_MINUTES || timeSlice == 'all'
       dates.push [TimeSlice.TEN_MINUTES, "#{@date time} #{@hours time}:#{@floorMinutes(time, 10)}:00"]

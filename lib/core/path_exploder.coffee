@@ -1,3 +1,6 @@
+require './extensions'
+Event = require('./../models/event').Event
+
 class PathExploder
 
   @permuteDimensions: (dimension, dimensions) ->
@@ -19,21 +22,27 @@ class PathExploder
   @addDimension: (segment, dimensions) ->
     paths = []
     for dimension in dimensions
-      path = "#{segment}/#{dimension}"
-      path = path.replace(/^\/+/,'') # remove trailing slash
+      path = "#{segment}#{dimension}/"
+      #path = path.surround(Event.PATH_SEPARATOR)
+      #path = path.replace(/^\/+/,'') # remove trailing slash
+      #path = path.sanitize()
       paths.push path
       #console.log "addDimension: #{path}"
     paths
 
 
   @explode: (path) ->
-    paths = ['']
-    segments = path.split('/')
+    paths = [Event.ROOT_PATH]
+    return paths if (path ? '').empty()
+
+    path = path.trimSlashes()
+    segments = path.split(Event.PATH_SEPARATOR)
+    #console.log '[Explode]', segments
     combinatorial = 1;
     combinatorialTally = 0
 
     for segment in segments
-      dimensions = segment.split('|')
+      dimensions = segment.split(Event.DIMENSION_SEPARATOR)
 
       # AB : todo make this a config variable whether or not to permute automatically
       dimensions = @permute(dimensions)

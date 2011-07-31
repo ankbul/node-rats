@@ -1,12 +1,14 @@
 require './../core/extensions'
 
 class Event
-  @ROOT_PATH = ''
+  @ROOT_PATH = '/'
+  @PATH_SEPARATOR = '/'
+  @DIMENSION_SEPARATOR = '|'
 
   constructor: (data) ->
     @count          = data.count ? 0
     @previousCount  = data.previousCount ? 0
-    @path           = data.path ? ''
+    @path           = data.path ? Event.ROOT_PATH
     @name           = data.name ? Event.extractNameFromPath @path
     @redisKey       = data.redisKey ? ''
     @events         = []
@@ -42,13 +44,13 @@ class Event
 
 
   @extractNameFromPath: (path) ->
-    segments = path.split('/')
+    segments = path.trimSlashes().split('/')
     return segments[segments.length - 1]
 
 
   # builds an event tree from a flattened event list
   @buildTree: (path, eventList) ->
-    root = new Event({path: '', name: ''})
+    root = new Event({path: Event.ROOT_PATH, name: ''})
     #console.log 'Event.coffee::root', root
     return root if eventList.length == 0
 
