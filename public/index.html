@@ -15,29 +15,127 @@
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.11/jquery-ui.js"></script>
     <script type="text/javascript" src="js/lib/socket.io-0.7.2.js"></script>
     <script type="text/javascript" src="js/lib/d3.js"></script>
+    <script type="text/javascript" src="js/lib/rgraph/RGraph.line.js"></script>
+    <script type="text/javascript" src="js/lib/rgraph/RGraph.common.core.js"></script>
+    <script type="text/javascript" src="js/lib/rgraph/RGraph.common.adjusting.js"></script>
+    <script type="text/javascript" src="js/lib/rgraph/RGraph.common.annotate.js"></script>
+    <script type="text/javascript" src="js/lib/rgraph/RGraph.common.context.js"></script>
+    <script type="text/javascript" src="js/lib/rgraph/RGraph.common.resizing.js"></script>
+    <script type="text/javascript" src="js/lib/rgraph/RGraph.common.tooltips.js"></script>
+    <script type="text/javascript" src="js/lib/rgraph/RGraph.common.zoom.js"></script>
     <script type="text/javascript" src="js/lib/d3.chart.min.js"></script>
     <script type="text/javascript" src="js/models/event.js?v=1"></script>
-    <script type="text/javascript" src="js/models/server.js?v=1"></script>
-    <script type="text/javascript" src="js/views/live.js?v=1"></script>
+    <script type="text/javascript" src="js/models/historical.js?v=1"></script>
+    <script type="text/javascript" src="js/models/time_slice.js?v=1"></script>
+    <script type="text/javascript" src="js/models/view.js?v=1"></script>
+    <script type="text/javascript" src="js/models/manager.js?v=1"></script>
+    <script type="text/javascript" src="js/views/live.js?v=2"></script>
+    <script type="text/javascript" src="js/views/past.js?v=2"></script>
     <script type="text/javascript" src="js/index.js?v=1"></script>
 
 
+    <style type="text/css">
+        .live_count, .live_change_rate, .live_ratio {
+            float: left;
+            width: 10%;
+            font-size: 48px;
+            height: 100px;
+            font-weight: bold;
+        }
+        .live_title {
+            float: left;
+            width: 10%;
+            font-size: 16px;
+            height: 100px;
+        }
+    </style>
 
 
 </head>
 
 <body>
+    <div>
+        <a href="#" id="timeslice_1minute">1 minute</a>&nbsp;&nbsp;&nbsp;&nbsp;
+        <a href="#" id="timeslice_5minute">5 minutes</a>&nbsp;&nbsp;&nbsp;&nbsp;
+        <a href="#" id="timeslice_10minute">10 minutes</a>&nbsp;&nbsp;&nbsp;&nbsp;
+        <a href="#" id="timeslice_1hour">1 hour</a>&nbsp;&nbsp;&nbsp;&nbsp;
+        <a href="#" id="timeslice_1day">1 day</a>&nbsp;&nbsp;&nbsp;&nbsp;
+        <a href="#" id="navigate_back">Back</a>&nbsp;&nbsp;&nbsp;&nbsp;
+    </div>
 
-    <div id="chart">
+    <div>
+        <a href="#" id="type_past">Past</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <a href="#" id="type_live">Live</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <a href="#" id="type_future">Future</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
 
     </div>
 
-    <button class="first last" onclick="transition()">
-        Update
-      </button><p>
+    <br /><br />
 
-    <div id="container">
+
+    <div id="data"></div>
+
+
+    <div id = "template_live" style="display: none">
+        <div class="live_count">37</div>
+        <div class="live_title">wallpost</div>
+        <div class="live_change_rate">2%</div>
+        <div class="live_ratio">52%</div>
+        <br style="clear: both" />
+
     </div>
+
+    <canvas id="cvs" width="800" height="450">[No canvas support]</canvas>
+
+<script type="text/javascript">
+//    d1 = [];
+//    d2 = [];
+//
+//    // Pre-pad the arrays with 100 null values
+//    for (var i=0; i< 100; ++i) {
+//        d1.push(null);
+//        d2.push(null);
+//    }
+//
+//    function getGraph(id, d1, d2)
+//    {
+//        var graph = new RGraph.Line(id, d1, d2);
+//        graph.Set('chart.background.barcolor1', 'white');
+//        graph.Set('chart.background.barcolor2', 'white');
+//        graph.Set('chart.title.xaxis', 'Time');
+//        graph.Set('chart.filled', true);
+//        graph.Set('chart.fillstyle', ['#daf1fa', '#faa']);
+//        graph.Set('chart.colors', ['rgb(169, 222, 244)', 'red']);
+//        graph.Set('chart.linewidth', 3);
+//        graph.Set('chart.ymax', 20);
+//        graph.Set('chart.xticks', 25);
+//
+//        return graph;
+//    }
+//
+//    function drawGraph (e)
+//    {
+//        // Clear the canvas and redraw the chart
+//        RGraph.Clear(document.getElementById("cvs"));
+//        var graph = getGraph('cvs', d1, d2);
+//        graph.Draw();
+//
+//        // Add some data to the data arrays
+//        d1.push(RGraph.random(5, 10));
+//        d2.push(RGraph.random(5, 10));
+//
+//        // Get rid of the first values of the arrays
+//        if (d1.length > 100) {
+//            d1 = RGraph.array_shift(d1);
+//            d2 = RGraph.array_shift(d2);
+//        }
+//
+//        setTimeout(drawGraph,250);
+//    }
+//
+//    drawGraph();
+</script>
 
 
 </body>

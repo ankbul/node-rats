@@ -11,42 +11,31 @@
       this.m = [5, 40, 20, 120];
       this.chart = d3.chart.bullet().width(this.w - this.m[1] - this.m[3]).height(this.h - this.m[0] - this.m[2]);
     }
+    RLive.prototype.addNextClick = function(element, event) {
+      return element.click(__bind(function() {
+        if (event.events.length > 0) {
+          return $(this).trigger(RLive.EVENT_NAVIGATE, {
+            path: event.path,
+            type: RManager.EVENT_TYPE_LIVE,
+            timeSlice: this.timeSlice
+          });
+        }
+      }, this));
+    };
     RLive.prototype.drawGraph = function(data) {
-      var title;
-      $("#chart").empty();
-      this.vis = d3.select("#chart").selectAll("svg").data(data).enter().append("svg:svg").attr("class", "bullet").attr("width", this.w).attr("height", this.h).attr("id", function(d) {
-        return d.title;
-      }).on('click', __bind(function(d) {
-        console.log('Trying to trigger an event');
-        console.log("path " + d.obj.path);
-        return $(this).trigger(RLive.EVENT_NAVIGATE, {
-          path: d.obj.path,
-          type: RServer.EVENT_TYPE_LIVE,
-          interval: this.timeSlice
-        });
-      }, this)).append("svg:g").attr("transform", "translate(" + this.m[3] + "," + this.m[0] + ")").call(this.chart);
-      title = this.vis.append("svg:g").attr("text-anchor", "end").attr("transform", "translate(-6," + (this.h - this.m[0] - this.m[2]) / 2 + ")");
-      title.append("svg:text").attr("class", "title").text(function(d) {
-        return d.title;
-      });
-      title.append("svg:text").attr("class", "subtitle").attr("dy", "1em").text(function(d) {
-        return d.subtitle;
-      });
-      return this.chart.duration(500);
+      var div, event, topCount, _i, _len, _ref, _results;
+      console.log(data);
+      topCount = data.count;
+      _ref = data.events;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        event = _ref[_i];
+        _results.push($('#' + event.name).length === 0 ? (div = $('#template_live').clone(), div.attr('id', event.name), div.show(), this.addNextClick(div, event), div.find('.live_count').html(event.count), div.find('.live_title').html(event.name), div.find('.live_ratio').html(parseInt(event.count * 100 / topCount) + '%'), $('#data').append(div)) : (div = $('#' + event.name), div.find('.live_count').html(event.count), div.find('.live_title').html(event.name), div.find('.live_ratio').html(parseInt(event.count * 100 / topCount) + '%')));
+      }
+      return _results;
     };
     RLive.prototype.updateGraph = function(data) {
-      var title;
-      this.vis.data(data);
-      this.vis.call(this.chart);
-      d3.select("#chart").selectAll("svg").selectAll("text.title").remove();
-      d3.select("#chart").selectAll("svg").selectAll("text.subtitle").remove();
-      title = this.vis.append("svg:g").attr("text-anchor", "end").attr("transform", "translate(-6," + (this.h - this.m[0] - this.m[2]) / 2 + ")");
-      title.append("svg:text").attr("class", "title").text(function(d) {
-        return d.title;
-      });
-      return title.append("svg:text").attr("class", "subtitle").attr("dy", "1em").text(function(d) {
-        return d.subtitle;
-      });
+      return this.drawGraph(data);
     };
     return RLive;
   })();

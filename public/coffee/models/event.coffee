@@ -1,9 +1,11 @@
 class REvent
-  constructor: (data) ->
-    @count  = data.count || 0
-    @name   = data.name || ''
-    @path   = data.path || ''
-    @events = []
+  constructor: (data, color) ->
+    @count        = data.count ? 0
+    @name         = data.name ? ''
+    @path         = data.path ? ''
+    @color       = color ? 'red'
+    @measurements = data.measurements ? []
+    @events       = []
 
     if data.events
       for ev in data.events
@@ -41,6 +43,7 @@ class REvent
     @count = data.count || 0
     @name   = data.name || ''
     @path   = data.path || ''
+    @measurements = data.measurements ? []
     if !data.events
       @events = []
       return

@@ -2,7 +2,6 @@ require './../core/extensions'
 TimeSlice = require('./time_slice').TimeSlice
 Event = require('./event').Event
 
-
 class View
 
   @VIEW_LIVE = 'live'

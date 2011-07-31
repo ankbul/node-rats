@@ -2,7 +2,7 @@ require './lib/core/extensions'
 express = require 'express'
 socket = require 'socket.io'
 config = require('./config').config
-SocketClient = require('./lib/client/socket_client').SocketClient
+SocketManager = require('./lib/client/socket_manager').SocketManager
 EventSource = require('./lib/sources/event_source').EventSource
 TimeSlice = require('./lib/models/time_slice').TimeSlice
 Event = require('./lib/models/event').Event
@@ -19,8 +19,8 @@ app.listen(config.express.port)
 
 
 # set up websocket input
-socketClient = new SocketClient config.socket.port
-#socketClient.listen()
+socketManager = new SocketManager config.socket.port
+socketManager.listen()
 
 
 
@@ -42,7 +42,7 @@ Event = require('./lib/models/event').Event
 #console.log TimeExploder.explode d, TimeSlice.ONE_MINUTE, 10
 
 
-if true
+if false
 
   RedisSink = require('./lib/sinks/redis_sink').RedisSink
 
@@ -63,6 +63,4 @@ if true
       for event in eventView.eventList
         console.log event.measurements
     )
-
-
 
