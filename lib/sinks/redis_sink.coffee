@@ -181,6 +181,7 @@ class RedisSink
     testPath = event.data.tp
     funnel = event.data.f
     funnelStep = event.data.fs
+    value = parseInt(event.data.v ? 1)
     paths = PathExploder.explode(event.data.e)
 
     # save meta
@@ -188,7 +189,7 @@ class RedisSink
 
     # save increments at various time increments
     timePaths = (@getTimePaths event.time, 'all', paths).map (element) -> element.timePath
-    @redisClient.incrby(RedisKey.path(timePath), 1) for timePath in timePaths
+    @redisClient.incrby(RedisKey.path(timePath), value) for timePath in timePaths
 
 
     # build the distribution numbers
