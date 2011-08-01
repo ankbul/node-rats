@@ -6,7 +6,6 @@ class TimeExploder
   @MILLISECONDS_PER_SECOND = 1000
   @SECONDS_PER_MINUTE = 60
 
-
   # function to do time math
   # returns a timeslice and the number of measurements that convert to the larger timeslice
   @convertToSmallerTimeIncrement: (timeSlice) ->
@@ -19,32 +18,6 @@ class TimeExploder
       when TimeSlice.ONE_DAY then [TimeSlice.ONE_HOUR, TimeSlice.convert(TimeSlice.ONE_DAY, TimeSlice.ONE_HOUR)]
 
 
-  @getSecondMultiplier: (timeSlice) ->
-    switch timeSlice
-      when TimeSlice.ONE_SECOND then 1
-      when TimeSlice.FIVE_SECONDS then 5
-      when TimeSlice.TEN_SECONDS then 10
-      when TimeSlice.ONE_MINUTE then 1*@SECONDS_PER_MINUTE
-      when TimeSlice.FIVE_MINUTES then 5*@SECONDS_PER_MINUTE
-      when TimeSlice.TEN_MINUTES then 10*@SECONDS_PER_MINUTE
-      when TimeSlice.ONE_HOUR then 60*@SECONDS_PER_MINUTE
-      when TimeSlice.ONE_DAY then 1440*@SECONDS_PER_MINUTE
-      else 1
-
-
-  @getMinuteMultiplier: (timeSlice) ->
-    switch timeSlice
-      when TimeSlice.ONE_SECOND   then (1/60)
-      when TimeSlice.FIVE_SECONDS then (5/60)
-      when TimeSlice.TEN_SECONDS then (10/60)
-      when TimeSlice.ONE_MINUTE then 1
-      when TimeSlice.FIVE_MINUTES then 5
-      when TimeSlice.TEN_MINUTES then 10
-      when TimeSlice.ONE_HOUR then 60
-      when TimeSlice.ONE_DAY then 1440
-      else 1
-
-
   @explode: (time, timeSlice, measurements = 1) ->
     datePaths = []
     times = []
@@ -53,7 +26,6 @@ class TimeExploder
       times.push new Date time
     else
       for i in [0..measurements-1]
-        #times.push new Date(time - i*TimeExploder.MILLISECONDS_PER_MINUTE*TimeExploder.getMinuteMultiplier(timeSlice))
         times.push new Date(time - i*TimeSlice.MILLISECONDS_PER_SECOND*TimeSlice.toSeconds(timeSlice))
 
     for t in times
