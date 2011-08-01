@@ -3,20 +3,25 @@ TimeSlice = require('./../models/time_slice').TimeSlice
 class TimeExploder
 
   @MILLISECONDS_PER_MINUTE = 60000
+  @MILLISECONDS_PER_SECOND = 1000
   @SECONDS_PER_MINUTE = 60
 
 
+  # function to do time math
+  # returns a timeslice and the number of measurements that convert to the larger timeslice
   @convertToSmallerTimeIncrement: (timeSlice) ->
     switch timeSlice
-      when TimeSlice.ONE_MINUTE then TimeSlice.FIVE_SECONDS
-      when TimeSlice.FIVE_MINUTES then TimeSlice.ONE_MINUTE
-      when TimeSlice.TEN_MINUTES then TimeSlice.ONE_MINUTE
-      when TimeSlice.ONE_HOUR then TimeSlice.TEN_MINUTES
-      when TimeSlice.ONE_DAY then TimeSlice.ONE_HOUR
+      when TimeSlice.FIVE_SECONDS then [TimeSlice.ONE_SECOND, TimeSlice.convert(TimeSlice.FIVE_SECONDS, TimeSlice.ONE_SECOND)]
+      when TimeSlice.ONE_MINUTE then [TimeSlice.FIVE_SECONDS, TimeSlice.convert(TimeSlice.ONE_MINUTE, TimeSlice.FIVE_SECONDS)]
+      #when TimeSlice.FIVE_MINUTES then [TimeSlice.ONE_MINUTE, TimeSlice.convert(TimeSlice.FIVE_MINUTES, TimeSlice.ONE_MINUTE)]
+      when TimeSlice.TEN_MINUTES then [TimeSlice.ONE_MINUTE, TimeSlice.convert(TimeSlice.TEN_MINUTES, TimeSlice.ONE_MINUTE)]
+      when TimeSlice.ONE_HOUR then [TimeSlice.TEN_MINUTES, TimeSlice.convert(TimeSlice.ONE_HOUR, TimeSlice.TEN_MINUTES)]
+      when TimeSlice.ONE_DAY then [TimeSlice.ONE_HOUR, TimeSlice.convert(TimeSlice.ONE_DAY, TimeSlice.ONE_HOUR)]
 
 
   @getSecondMultiplier: (timeSlice) ->
     switch timeSlice
+      when TimeSlice.ONE_SECOND then 1
       when TimeSlice.FIVE_SECONDS then 5
       when TimeSlice.TEN_SECONDS then 10
       when TimeSlice.ONE_MINUTE then 1*@SECONDS_PER_MINUTE
@@ -29,6 +34,7 @@ class TimeExploder
 
   @getMinuteMultiplier: (timeSlice) ->
     switch timeSlice
+      when TimeSlice.ONE_SECOND   then (1/60)
       when TimeSlice.FIVE_SECONDS then (5/60)
       when TimeSlice.TEN_SECONDS then (10/60)
       when TimeSlice.ONE_MINUTE then 1
@@ -43,8 +49,12 @@ class TimeExploder
     datePaths = []
     times = []
 
-    for i in [0..measurements-1]
-      times.push new Date(time - i*TimeExploder.MILLISECONDS_PER_MINUTE*TimeExploder.getMinuteMultiplier(timeSlice))
+    if timeSlice == 'all'
+      times.push new Date time
+    else
+      for i in [0..measurements-1]
+        #times.push new Date(time - i*TimeExploder.MILLISECONDS_PER_MINUTE*TimeExploder.getMinuteMultiplier(timeSlice))
+        times.push new Date(time - i*TimeSlice.MILLISECONDS_PER_SECOND*TimeSlice.toSeconds(timeSlice))
 
     for t in times
       explosions = @calculateTimeSlice(t, timeSlice)
@@ -56,6 +66,9 @@ class TimeExploder
 
   @calculateTimeSlice: (time, timeSlice = TimeSlice.ALL) ->
     dates = []
+
+    if timeSlice == TimeSlice.ONE_SECOND || timeSlice == 'all'
+      dates.push [TimeSlice.ONE_SECOND, "#{@date time} #{@hours time}:#{@padNumber(time.getMinutes())}:#{@padNumber(time.getSeconds())}"]
 
     if timeSlice == TimeSlice.FIVE_SECONDS || timeSlice == 'all'
       dates.push [TimeSlice.FIVE_SECONDS, "#{@date time} #{@hours time}:#{@padNumber(time.getMinutes())}:#{@floorSeconds(time, 5)}"]

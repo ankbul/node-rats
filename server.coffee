@@ -27,7 +27,7 @@ Event = require('./lib/models/event').Event
 
 
 # testing
-if true
+if false
 
   RedisSink = require('./lib/sinks/redis_sink').RedisSink
 
@@ -36,12 +36,17 @@ if true
     #  console.log '[Server.coffee]', eventView, '!!!!!!!!!!!!!!!!', eventView.eventTree.events
     #  eventView.eventTree.print()
     #)
-    RedisSink.getLiveEventData(new View({timeSlice: TimeSlice.ONE_DAY, path: 'popchat'}), (eventView) ->
+    #RedisSink.getLiveEventData(new View({timeSlice: TimeSlice.ONE_DAY, path: 'popchat'}), (eventView) ->
+    #  console.log '[Server.coffee]', eventView, '!!!!!!!!!!!!!!!!', eventView.eventTree.events
+    #  eventView.eventTree.print()
+    #)
+
+    RedisSink.getRollingLiveEventData(new View({timeSlice: TimeSlice.FIVE_SECONDS, path: 'popchat'}), (eventView) ->
       console.log '[Server.coffee]', eventView, '!!!!!!!!!!!!!!!!', eventView.eventTree.events
       eventView.eventTree.print()
     )
 
-  if true
+  if false
     historicalView = new View({timeSlice: TimeSlice.TEN_MINUTES, path:'popchat', type: 'historical', measurements: 20})
     RedisSink.getHistoricalEventData(historicalView, (eventView) ->
       console.log '[Server.coffee]', eventView

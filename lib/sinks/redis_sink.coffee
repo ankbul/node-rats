@@ -76,20 +76,54 @@ class RedisSink
 
   # returns an event view
   #  = new View({timeSlice: TimeSlice.ONE_MINUTE, path: Event.ROOT_PATH})
-  @getLiveEventData2: (view, eventViewCallback) ->
+  @getRollingLiveEventData: (view, eventViewCallback) ->
     time = new Date()
-    @listEvents view, Event.MAX_DEPTH, (err, eventPaths) =>
-      smallerTimeSlice = TimeExploder.convertToSmallerTimeIncrement view.timeSlice
-      paths = @getTimePaths(time, view.timeSlice, eventPaths)
+    @listEvents view, 1, (err, eventPaths) =>
+      if eventPaths.length == 0
+        eventViewCallback(new EventView(view, new Event {}))
+        return
+
+      [smallerTimeSlice, numMeasurements] = TimeExploder.convertToSmallerTimeIncrement view.timeSlice
+      # get 2 smaller measurements
+      paths = @getTimePaths(time, smallerTimeSlice, eventPaths, numMeasurements*2)
       redisTimePaths = RedisKey.paths(paths.map (element) -> element.timePath)
+      #console.log '[redistimepaths]', redisTimePaths
 
       # get events from redis
       @redisClient.mget redisTimePaths, (err, replies) =>
 
-        # create events from the event list
         events = []
+        currentEvent = null
+        currentPath = ''
+        count = 0
+        previousCount = 0
+        batch = 0
+
         for i in [0..redisTimePaths.length-1]
-          events.push new Event({path: paths[i].path, count: replies[i] ? 0, redisKey: redisTimePaths[i]})
+          if currentPath != paths[i].path
+            currentPath = paths[i].path
+            currentEvent = new Event({path: paths[i].path})
+            #console.log '[@getLiveEventData2: currentEvent]', currentEvent
+            events.push currentEvent
+
+          # all this logic is for tallying up the current (last N measurements) and
+          # tallying the previous (last [N*2..N] measurements)
+          batchEnd = batch*numMeasurements*2
+          if i == batchEnd
+            count = 0
+            previousCount = 0
+            batch += 1
+
+          redisCount = parseInt(replies[i] ? 0)
+          if i < batchEnd - numMeasurements
+            count += redisCount
+            currentEvent.count = count
+            #console.log '[fuck-count]', "i: #{i}, currentPath: #{currentPath}, batch: #{batch}, count: #{count}, previous: #{previousCount}"
+          else
+            previousCount += redisCount
+            currentEvent.previousCount = previousCount
+            #console.log '[fuck-previous]', "i: #{i}, currentPath: #{currentPath}, batch: #{batch}, count: #{count}, previous: #{previousCount}"
+
 
         eventTree = Event.buildTree view.path, events
         eventView = new EventView(view, eventTree)
@@ -106,10 +140,10 @@ class RedisSink
         eventViewCallback(new EventView(view, new Event {}))
         return
 
-      paths = @getTimePaths(time, view.timeSlice, eventPaths)
+      measurements = 1
+      paths = @getTimePaths(time, view.timeSlice, eventPaths, measurements)
       redisTimePaths = RedisKey.paths(paths.map (element) -> element.timePath)
-
-      console.log '[redisTimePaths]', redisTimePaths
+      #console.log '[redisTimePaths]', redisTimePaths
 
       # get events from redis
       @redisClient.mget redisTimePaths, (err, replies) =>
@@ -118,7 +152,6 @@ class RedisSink
         events = []
         for i in [0..redisTimePaths.length-1]
           events.push new Event({path: paths[i].path, count: replies[i] ? 0, redisKey: redisTimePaths[i]})
-
 
         eventTree = Event.buildTree view.path, events
         eventView = new EventView(view, eventTree)
@@ -150,22 +183,11 @@ class RedisSink
     funnelStep = event.data.fs
     paths = PathExploder.explode(event.data.e)
 
-    # build the meta list of events to add to the set
-    # remove trail
-    # AB : todo - shouldn't be doing path manipulation here
-    # AB : todo we shouldn't have save this meta set every time
-    # save the meta to redis
-    #metaPaths = ( Path.sanitize("#{bucket}#{path}".surround(Event.PATH_SEPARATOR)) for path in paths)
-    #@redisClient.sadd(RedisKey.metaKeys(), metaPath) for metaPath in metaPaths
+    # save meta
     @redisClient.zadd(RedisKey.metaKeys(), path.depth, path.path) for path in paths #when path.depth > 0
 
-    # build a list of increments
+    # save increments at various time increments
     timePaths = (@getTimePaths event.time, 'all', paths).map (element) -> element.timePath
-
-    # AB : todo - shouldn't be doing path manipulation here
-    # save the increments to redis
-    #bucketPaths = ( Path.sanitize("#{bucket}#{path}".surround(Event.PATH_SEPARATOR)) for path in timePaths)
-    #@redisClient.incrby(RedisKey.path(bucketPath), 1) for bucketPath in bucketPaths
     @redisClient.incrby(RedisKey.path(timePath), 1) for timePath in timePaths
 
 

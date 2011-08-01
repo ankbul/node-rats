@@ -40,7 +40,7 @@ class Event
       console.log "[Event::insert] skipped! #{event}"
 
   print: (level = 0) ->
-    console.log "Level: #{level}, Path: #{@path}, Name: #{@name}, Count: #{@count}"
+    console.log "Level: #{level}, Path: #{@path}, Name: #{@name}, Count: #{@count}, PreviousCount: #{@previousCount}"
     e.print level+1 for e in @events
 
 
