@@ -1,69 +1,64 @@
-class REvent
+class Event
+
+  @getGraphColor : () ->
+    colors = ['rgb(169, 222, 244)', '#3B5998', 'red']
+    index = Math.floor(Math.random() * colors.length)
+    return colors[index]
+
   constructor: (data, color) ->
+    @events        = []
     @count         = data.count ? 0
     @name          = data.name ? ''
     @path          = data.path ? ''
-    @color         = color ? RHistorical.getGraphColor()
-    @measurements  = data.measurements.slice(0, data.measurements.length / 2) ? []
-    @events        = []
+    @color         = color ? Event.getGraphColor()
+    @measurements  = data.measurements ? []
     @previousCount = data.previousCount ? 0
-
     if data.events
       for ev in data.events
-        @events.push(new REvent(ev))
-
-
-  toJson: () ->
-    data = []
-
-    maxRange = -1
-
-    for event in @events
-      maxRange = event.count if event.count > maxRange
-
-    data = []
-    for event in @events
-      data.push({
-        title     :event.name,
-        subtitle  : "Count " + event.count,
-        ranges    :[maxRange],
-        measures  :[event.count],
-        markers   :[maxRange],
-        obj       : event
-      })
-
-    return data
-
-  getEvent: (path) ->
-    for event in @events
-      if event.path == path
-        return event
-    return null
+        @events.push new Event(ev)
 
   update: (data) ->
     @count          = data.count || 0
     @name           = data.name || ''
     @path           = data.path || ''
-    @measurements  = data.measurements.slice(0, data.measurements.length / 2) ? []
+    @measurements   = data.measurements ? []
     @previousCount  = data.previousCount ? 0
-
-
 
     if !data.events
       @events = []
       return
 
-    for newEventData in data.events
-      ev = @getEvent newEventData.path
-
+    for evData in data.events
+      ev = @getByPath evData.path
       if ev == null
-        @events.push new REvent(newEventData)
+        @events.push new Event(newEventData)
       else
-        ev.update(newEventData)
+        ev.update(evData)
 
+  getByPath: (path) ->
+    for event in @events
+      if event.path == path
+        return event
+    return null
 
+  getGraphData: (showPrevious = false) ->
+    @nowData      = @measurements.slice(0, @measurements.length / 2)
+    @previousData = @measurements.slice(@measurements.length / 2)
+    graphData = {
+      data      : [@nowData.map((e) -> return e[1]).reverse()],
+      tooltips  : @nowData.map((e) -> return e[0]).reverse(),
+      legend    : [@path],
+      colors    : [@color]
+    }
+    if showPrevious
+      graphData.data      = [@previousData.map((e) -> return e[1]).reverse()].concat(graphData.data)
+      graphData.tooltips  = @previousData.map((e) -> return e[0]).reverse().concat(graphData.tooltips)
+      graphData.colors    = ['#CCC'].concat(graphData.colors)
+      graphData.legend    = ['past'].concat(graphData.legend)
 
-window.REvent = REvent
+    return graphData
+
+window.Event = Event
 
 
 

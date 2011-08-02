@@ -1,8 +1,6 @@
-socket = require 'socket.io'
-RedisSink = require('../sinks/redis_sink').RedisSink
-View = require('../models/view').View
+socket    = require 'socket.io'
+View      = require('../models/view').View
 TimeSlice = require('../models/time_slice').TimeSlice
-
 
 class SocketClient
 
@@ -10,9 +8,8 @@ class SocketClient
     @viewType    = View.VIEW_LIVE
     @currentView = new View({timeSlice: TimeSlice.ONE_MINUTE})
 
-
   changeView: (path, type, timeSlice) ->
     @viewType = type
-    @currentView = new View ({timeSlice: timeSlice, path: path, type: type, measurements: 40})
+    @currentView = new View ({timeSlice: timeSlice, path: path, type: type})
 
 exports.SocketClient = SocketClient

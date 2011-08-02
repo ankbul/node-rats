@@ -84,7 +84,7 @@ class RManager
         @eventData.update(data.eventTree)
         @eventView.updateGraph @eventData
       else
-        @eventData = new REvent(data.eventTree)
+        @eventData = new Event(data.eventTree)
         @eventView = new RLive(@currentPath, @currentTimeSlice)
         $(@eventView).bind(RLive.EVENT_NAVIGATE, (e, data) =>
           @changePath data.path

@@ -75,7 +75,7 @@
           this.eventData.update(data.eventTree);
           return this.eventView.updateGraph(this.eventData);
         } else {
-          this.eventData = new REvent(data.eventTree);
+          this.eventData = new Event(data.eventTree);
           this.eventView = new RLive(this.currentPath, this.currentTimeSlice);
           $(this.eventView).bind(RLive.EVENT_NAVIGATE, __bind(function(e, data) {
             return this.changePath(data.path);
