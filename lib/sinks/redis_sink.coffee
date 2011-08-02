@@ -1,5 +1,6 @@
 require('./../core/extensions')
 redis = require 'redis'
+async = require 'async'
 config = require('./../../config').config
 
 TimeExploder = require('./../core/time_exploder').TimeExploder
@@ -29,14 +30,29 @@ class RedisSink
   @DEPTH_TO_SEND = 2
   @redisClient = redis.createClient(config.redis.port, config.redis.host)
 
+  @redisPoolSize = 2
+  @redisConnections = []
+  @eventPaths = {}
+
+  @getConnection: () ->
+    return @redisClient
+    if @redisConnections.length == 0
+      for i in [0..@redisPoolSize - 1]
+        @redisConnections.push redis.createClient(config.redis.port, config.redis.host)
+
+    randomConnection = Math.floor(Math.random()*@redisPoolSize)
+    #console.log "random connection = #{randomConnection}"
+    return @redisConnections[randomConnection]
+
+
   # returns the set of known events
   # AB todo - use the in-memory tree, rather than from redis
   @listEvents: (view, depth, listEventsCallback) ->
     currentDepth = Path.getDepth view.path
 
-    @redisClient.zrangebyscore(RedisKey.metaKeys(), currentDepth, currentDepth + depth, (err, events) =>
+    @getConnection().zrangebyscore(RedisKey.metaKeys(), currentDepth, currentDepth + depth, (err, events) =>
       throw new Error(err) if err
-      console.log '[listEvents]', events
+      #console.log '[listEvents]', events
       # filter events based on the view path
       filteredEvents = (event for event in events when event.startsWith view.path)
       listEventsCallback(err, filteredEvents)
@@ -56,7 +72,7 @@ class RedisSink
       #console.log '[getHistoricalEventData::redisTimePaths]', redisTimePaths
 
       # get events from redis
-      @redisClient.mget redisTimePaths, (err, replies) =>
+      @getConnection().mget redisTimePaths, (err, replies) =>
         # create events from the event list
 
         events = []
@@ -90,7 +106,7 @@ class RedisSink
       #console.log '[redistimepaths]', redisTimePaths
 
       # get events from redis
-      @redisClient.mget redisTimePaths, (err, replies) =>
+      @getConnection().mget redisTimePaths, (err, replies) =>
 
         events = []
         currentEvent = null
@@ -152,7 +168,7 @@ class RedisSink
       #console.log '[redisTimePaths]', redisTimePaths
 
       # get events from redis
-      @redisClient.mget redisTimePaths, (err, replies) =>
+      @getConnection().mget redisTimePaths, (err, replies) =>
 
         # create events from the event list
         events = []
@@ -179,6 +195,10 @@ class RedisSink
         }
     timePaths
 
+
+  @incrby: (item) ->
+    RedisSink.redisClient.incrby(item[0], item[1])
+
   @send: (event) ->
     # todo - have a class to represent this stuff
     #bucket = event.data.b
@@ -190,12 +210,21 @@ class RedisSink
     value = parseInt(event.data.v ? 1)
     paths = PathExploder.explode(event.data.e)
 
-    # save meta
-    @redisClient.zadd(RedisKey.metaKeys(), path.depth, path.path) for path in paths #when path.depth > 0
+    # save meta, but only when we have to
+    for path in paths
+      if @eventPaths[path.path] == undefined
+        @redisClient.zadd(RedisKey.metaKeys(), path.depth, path.path)  #when path.depth > 0
+        @eventPaths[path.path] = path.depth
 
     # save increments at various time increments
     timePaths = (@getTimePaths event.time, 'all', paths).map (element) -> element.timePath
-    @redisClient.incrby(RedisKey.path(timePath), value) for timePath in timePaths
+
+    #@redisClient.incrby(RedisKey.path(timePath), value) for timePath in timePaths
+    # using the async library
+    redisTimePaths = timePaths.map (t) -> [RedisKey.path(t), value]
+    async.forEach(redisTimePaths,  @incrby, (err) ->
+      console.log err
+    )
 
 
     # build the distribution numbers

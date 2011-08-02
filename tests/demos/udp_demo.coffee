@@ -8,16 +8,28 @@ class UdpDemo
     udp = new UdpSource()
     udp.loopback msg
 
-  @testMultiUdpSend: (arrayMsg) ->
+  @testRandomMultiUdpSend: (arrayMsg) ->
     for msg in arrayMsg
       if (Math.random() * 20 > 14)
         @testUdpSend msg
 
+  @testMultiUdpSend: (arrayMsg) ->
+    for msg in arrayMsg
+      @testUdpSend msg
+
+
+
+
+setInterval( () ->
+  UdpDemo.testRandomMultiUdpSend ['/?e=popchat/wallpost/tf/clicked', '/?e=popchat/wallpost/mf/clicked', '/?e=popchat/wallpost/yn/clicked', '/?e=popchat/wallpost/rt/clicked']
+ , 50
+)
 
 setInterval( () ->
   UdpDemo.testMultiUdpSend ['/?e=popchat/wallpost/tf/clicked', '/?e=popchat/wallpost/mf/clicked', '/?e=popchat/wallpost/yn/clicked', '/?e=popchat/wallpost/rt/clicked']
- , 50
+ , 1
 )
+
 #UdpDemo.testUdpSend('/?e=popchat/login/new')
 
 #module.exports = testCase({
