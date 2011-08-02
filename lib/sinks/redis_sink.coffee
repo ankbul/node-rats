@@ -97,7 +97,7 @@ class RedisSink
         currentPath = ''
         count = 0
         previousCount = 0
-        batch = 0
+        batch = 1
 
         for i in [0..redisTimePaths.length-1]
           if currentPath != paths[i].path
@@ -108,21 +108,26 @@ class RedisSink
 
           # all this logic is for tallying up the current (last N measurements) and
           # tallying the previous (last [N*2..N] measurements)
-          batchEnd = batch*numMeasurements*2
           if i == batchEnd
             count = 0
             previousCount = 0
             batch += 1
 
+          batchEnd = batch*numMeasurements*2
+
           redisCount = parseInt(replies[i] ? 0)
+          #set = ''
           if i < batchEnd - numMeasurements
             count += redisCount
             currentEvent.count = count
-            #console.log '[fuck-count]', "i: #{i}, currentPath: #{currentPath}, batch: #{batch}, count: #{count}, previous: #{previousCount}"
+            #set = 'count'
           else
             previousCount += redisCount
             currentEvent.previousCount = previousCount
-            #console.log '[fuck-previous]', "i: #{i}, currentPath: #{currentPath}, batch: #{batch}, count: #{count}, previous: #{previousCount}"
+            #set = 'previous'
+
+          #if currentPath != Event.ROOT_PATH
+          #  console.log '[rolling]', "i: #{i}, set: #{set}, redisCount: #{redisCount} currentPath: #{currentPath}, time: #{paths[i].time}, batch: #{batch}, count: #{count}, previous: #{previousCount}"
 
           currentEvent.measurements.push [paths[i].time, redisCount]
 

@@ -12,6 +12,8 @@ class SocketManager
   listen: ->
     console.log "[SOCKET.IO] listening on port #{@port}"
     @io = socket.listen(@port)
+    # https://github.com/LearnBoost/Socket.IO/wiki/Configuring-Socket.IO
+    @io.set('log level', 1)
     @io.sockets.on Commands.CONNECTED, (socket) =>
       client = new SocketClient(socket)
       @clients.push(client)
