@@ -7,7 +7,7 @@
       this.name = (_ref2 = data.name) != null ? _ref2 : '';
       this.path = (_ref3 = data.path) != null ? _ref3 : '';
       this.color = color != null ? color : RHistorical.getGraphColor();
-      this.measurements = (_ref4 = data.measurements.splice(0, data.measurements.length / 2)) != null ? _ref4 : [];
+      this.measurements = (_ref4 = data.measurements.slice(0, data.measurements.length / 2)) != null ? _ref4 : [];
       this.events = [];
       this.previousCount = (_ref5 = data.previousCount) != null ? _ref5 : 0;
       if (data.events) {
@@ -60,7 +60,7 @@
       this.count = data.count || 0;
       this.name = data.name || '';
       this.path = data.path || '';
-      this.measurements = (_ref = data.measurements.splice(0, data.measurements.length / 2)) != null ? _ref : [];
+      this.measurements = (_ref = data.measurements.slice(0, data.measurements.length / 2)) != null ? _ref : [];
       this.previousCount = (_ref2 = data.previousCount) != null ? _ref2 : 0;
       if (!data.events) {
         this.events = [];
