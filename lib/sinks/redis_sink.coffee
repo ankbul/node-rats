@@ -34,7 +34,7 @@ class RedisSink
   @listEvents: (view, depth, listEventsCallback) ->
     currentDepth = Path.getDepth view.path
 
-    @redisClient.zrange(RedisKey.metaKeys(), currentDepth, currentDepth + depth, (err, events) =>
+    @redisClient.zrangebyscore(RedisKey.metaKeys(), currentDepth, currentDepth + depth, (err, events) =>
       throw new Error(err) if err
       console.log '[listEvents]', events
       # filter events based on the view path
