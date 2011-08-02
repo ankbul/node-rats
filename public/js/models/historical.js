@@ -37,7 +37,7 @@
       this.events = [];
       for (_i = 0, _len = data.length; _i < _len; _i++) {
         ev = data[_i];
-        this.events.push(new REvent(ev, RHistorical.getGraphColor()));
+        this.events.push(new Event(ev, RHistorical.getGraphColor()));
       }
     }
     RHistorical.prototype.getGraphData = function() {
@@ -86,7 +86,7 @@
       for (_i = 0, _len = data.length; _i < _len; _i++) {
         newEventData = data[_i];
         ev = this.getByPath(newEventData.path);
-        _results.push(ev ? ev.update(newEventData) : this.events.push(new REvent(newEventData, RHistorical.getGraphColor())));
+        _results.push(ev ? ev.update(newEventData) : this.events.push(new Event(newEventData, RHistorical.getGraphColor())));
       }
       return _results;
     };

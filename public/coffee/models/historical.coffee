@@ -28,7 +28,7 @@ class RHistorical
   constructor: (data) ->
     @events = []
     for ev in data
-      @events.push(new REvent(ev, RHistorical.getGraphColor()))
+      @events.push(new Event(ev, RHistorical.getGraphColor()))
 
   getGraphData : () ->
     results   = []
@@ -61,7 +61,7 @@ class RHistorical
       if ev
         ev.update(newEventData)
       else
-        @events.push(new REvent(newEventData, RHistorical.getGraphColor()))
+        @events.push(new Event(newEventData, RHistorical.getGraphColor()))
 
 
 

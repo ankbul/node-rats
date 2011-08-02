@@ -6,19 +6,17 @@
     function RLive(path, timeSlice) {
       this.path = path;
       this.timeSlice = timeSlice;
-      this.w = 960;
-      this.h = 50;
-      this.m = [5, 40, 20, 120];
-      this.chart = d3.chart.bullet().width(this.w - this.m[1] - this.m[3]).height(this.h - this.m[0] - this.m[2]);
     }
     RLive.prototype.addNextClick = function(element, event) {
       return element.click(__bind(function() {
+        var data;
         if (event.events.length > 0) {
-          return $(this).trigger(RLive.EVENT_NAVIGATE, {
+          data = {
             path: event.path,
             type: RManager.EVENT_TYPE_LIVE,
             timeSlice: this.timeSlice
-          });
+          };
+          return $(this).trigger(RLive.EVENT_NAVIGATE, data);
         }
       }, this));
     };
@@ -44,7 +42,8 @@
         div.find('.live_title').html(event.name);
         div.find('.live_ratio').html(parseInt(event.count * 100 / topCount) + '%');
         div.find('.live_change_rate').html(parseInt(event.count * 100 / event.previousCount) + '%');
-        graphData = RHistorical.getGraphDataForEvent(event);
+        graphData = event.getGraphData(true);
+        console.log(graphData);
         _results.push(RPast.drawGraph(graphData, 'canvas' + event.name));
       }
       return _results;
