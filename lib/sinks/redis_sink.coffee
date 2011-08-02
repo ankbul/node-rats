@@ -26,7 +26,7 @@ class RedisKey
 
 
 class RedisSink
-
+  @DEPTH_TO_SEND = 2
   @redisClient = redis.createClient(config.redis.port, config.redis.host)
 
   # returns the set of known events
@@ -78,7 +78,7 @@ class RedisSink
   #  = new View({timeSlice: TimeSlice.ONE_MINUTE, path: Event.ROOT_PATH})
   @getRollingLiveEventData: (view, eventViewCallback) ->
     time = new Date()
-    @listEvents view, 1, (err, eventPaths) =>
+    @listEvents view, RedisSink.DEPTH_TO_SEND, (err, eventPaths) =>
       if eventPaths.length == 0
         eventViewCallback(new EventView(view, new Event {}))
         return
@@ -124,6 +124,7 @@ class RedisSink
             currentEvent.previousCount = previousCount
             #console.log '[fuck-previous]', "i: #{i}, currentPath: #{currentPath}, batch: #{batch}, count: #{count}, previous: #{previousCount}"
 
+          currentEvent.measurements.push [paths[i].time, redisCount]
 
         eventTree = Event.buildTree view.path, events
         eventView = new EventView(view, eventTree)
