@@ -10,6 +10,10 @@ EventSink = require('./../sinks/event_sink').EventSink
 
 class EventBuffer
 
+  @processedCount = 0
+  @sampleSize = 2000
+  @lastSampleTime = new Date()
+
   @processEvent: (event, callback) ->
     parsed = url.parse event.data, true
     #console.log '[EventBuffer] processing: ' + parsed.href
@@ -21,13 +25,21 @@ class EventBuffer
     EventSink.send eventPacket
     callback()
 
-  @eventQueue = async.queue @processEvent, 2
+  # todo - what should be the proper concurrency level?
+  @eventQueue = async.queue @processEvent, 10
 
   # pushes data to async.queue
   @buffer: (data) ->
     task = {data: data, time: new Date()}
     if (data + '').length > 1
-      console.log "[EventBuffer] Incoming request: [#{data}]"
+      @processedCount += 1
+      if @processedCount % @sampleSize == 0
+        newSampleTime = new Date()
+        time = (newSampleTime - @lastSampleTime) / 1000 # timespan in seconds
+        rate = @sampleSize / time
+        console.log "[EventBuffer] Incoming request ##{@processedCount} @ #{time} #{rate}: [#{data}]"
+        @lastSampleTime = newSampleTime
+
       @eventQueue.push task, (err) -> #console.log '[EventBuffer] processed'
 
 

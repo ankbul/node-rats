@@ -1,14 +1,13 @@
-TcpSource = require('./tcp_source').TcpSource
+#TcpSource = require('./tcp_source').TcpSource
+UdpSource = require('./udp_source').UdpSource
 HttpSource = require('./http_source').HttpSource
-EventBuffer = require('./../core/event_buffer').EventBuffer
 
 class EventSource
 
   @listen: ->
-    new TcpSource().listen()
+    #new TcpSource().listen()
+    new UdpSource().listen()
     new HttpSource().listen()
 
-  #buffer: (data) ->
-  #  EventBuffer.buffer data
 
 exports.EventSource = EventSource

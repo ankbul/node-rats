@@ -1,29 +1,28 @@
 require './lib/core/extensions'
-express = require 'express'
-socket = require 'socket.io'
 config = require('./config').config
-SocketManager = require('./lib/client/socket_manager').SocketManager
+
+# set up the event listeners
 EventSource = require('./lib/sources/event_source').EventSource
 TimeSlice = require('./lib/models/time_slice').TimeSlice
 Event = require('./lib/models/event').Event
 View = require('./lib/models/view').View
-
-
 EventSource.listen()
 
 
-# set up client
+# set up website
+express = require 'express'
 app = express.createServer();
 app.use express.static __dirname + '/public'
 app.listen(config.express.port)
 
 
 # set up websocket input
+socket = require 'socket.io'
+SocketManager = require('./lib/client/socket_manager').SocketManager
 socketManager = new SocketManager config.socket.port
 socketManager.listen()
 
 
-Event = require('./lib/models/event').Event
 
 
 # testing
@@ -41,7 +40,7 @@ if false
     #  eventView.eventTree.print()
     #)
 
-    RedisSink.getRollingLiveEventData(new View({timeSlice: TimeSlice.FIVE_SECONDS, path: 'popchat'}), (eventView) ->
+    RedisSink.getRollingLiveEventData(new View({timeSlice: TimeSlice.TEN_MINUTES, path: 'popchat'}), (eventView) ->
       console.log '[Server.coffee]', eventView, '!!!!!!!!!!!!!!!!', eventView.eventTree.events
       eventView.eventTree.print()
     )

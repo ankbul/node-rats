@@ -46,4 +46,18 @@ module.exports = testCase({
     test.equal(path.surround('/'), '/foo/')
     test.done()
 
+  testArrayContains: (test) ->
+    arr = ['1s','2m','3m']
+    test.ok(arr.contains('1s'))
+    test.ok(arr.contains('2m'))
+    test.ok(arr.contains('3m'))
+    test.done()
+
+  testArrayNotContains: (test) ->
+    arr = ['1s','2m','3m']
+    test.ok(!arr.contains(null))
+    test.ok(!arr.contains(''))
+    test.ok(!arr.contains('foo'))
+    test.done()
+
 })

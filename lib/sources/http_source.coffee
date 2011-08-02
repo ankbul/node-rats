@@ -1,5 +1,4 @@
 http = require 'http'
-#EventSource = require('./event_source').EventSource
 EventBuffer = require('./../core/event_buffer').EventBuffer
 
 

@@ -1,4 +1,7 @@
 TimeSlice = require('./../models/time_slice').TimeSlice
+config = require('./../../config').config
+require('./extensions')
+
 
 class TimeExploder
 
@@ -39,26 +42,36 @@ class TimeExploder
   @calculateTimeSlice: (time, timeSlice = TimeSlice.ALL) ->
     dates = []
 
-    if timeSlice == TimeSlice.ONE_SECOND || timeSlice == 'all'
-      dates.push [TimeSlice.ONE_SECOND, "#{@date time} #{@hours time}:#{@padNumber(time.getMinutes())}:#{@padNumber(time.getSeconds())}"]
+    configuredTimeslices = config.timeSlices
+    # console.log configuredTimeslices
 
-    if timeSlice == TimeSlice.FIVE_SECONDS || timeSlice == 'all'
-      dates.push [TimeSlice.FIVE_SECONDS, "#{@date time} #{@hours time}:#{@padNumber(time.getMinutes())}:#{@floorSeconds(time, 5)}"]
+    if configuredTimeslices.contains TimeSlice.ONE_SECOND
+      if timeSlice == TimeSlice.ONE_SECOND || timeSlice == 'all'
+        dates.push [TimeSlice.ONE_SECOND, "#{@date time} #{@hours time}:#{@padNumber(time.getMinutes())}:#{@padNumber(time.getSeconds())}"]
 
-    if timeSlice == TimeSlice.ONE_MINUTE || timeSlice == 'all'
-      dates.push [TimeSlice.ONE_MINUTE, "#{@date time} #{@hours time}:#{@padNumber(time.getMinutes())}:00"]
+    if configuredTimeslices.contains TimeSlice.FIVE_SECONDS
+      if timeSlice == TimeSlice.FIVE_SECONDS || timeSlice == 'all'
+        dates.push [TimeSlice.FIVE_SECONDS, "#{@date time} #{@hours time}:#{@padNumber(time.getMinutes())}:#{@floorSeconds(time, 5)}"]
 
-    #if timeSlice == TimeSlice.FIVE_MINUTES || timeSlice == 'all'
-    #  dates.push [TimeSlice.FIVE_MINUTES, "#{@date time} #{@hours time}:#{@floorMinutes(time, 5)}:00"]
+    if configuredTimeslices.contains TimeSlice.ONE_MINUTE
+      if timeSlice == TimeSlice.ONE_MINUTE || timeSlice == 'all'
+        dates.push [TimeSlice.ONE_MINUTE, "#{@date time} #{@hours time}:#{@padNumber(time.getMinutes())}:00"]
 
-    if timeSlice == TimeSlice.TEN_MINUTES || timeSlice == 'all'
-      dates.push [TimeSlice.TEN_MINUTES, "#{@date time} #{@hours time}:#{@floorMinutes(time, 10)}:00"]
+    #if configuredTimeslices.contains timeSlice
+    #  if timeSlice == TimeSlice.FIVE_MINUTES || timeSlice == 'all'
+    #    dates.push [TimeSlice.FIVE_MINUTES, "#{@date time} #{@hours time}:#{@floorMinutes(time, 5)}:00"]
 
-    if timeSlice == TimeSlice.ONE_HOUR || timeSlice == 'all'
-      dates.push [TimeSlice.ONE_HOUR, "#{@date time} #{@floorHour time}"]
+    if configuredTimeslices.contains TimeSlice.TEN_MINUTES
+      if timeSlice == TimeSlice.TEN_MINUTES || timeSlice == 'all'
+        dates.push [TimeSlice.TEN_MINUTES, "#{@date time} #{@hours time}:#{@floorMinutes(time, 10)}:00"]
 
-    if timeSlice == TimeSlice.ONE_DAY || timeSlice == 'all'
-      dates.push [TimeSlice.ONE_DAY, "#{@date time}"]
+    if configuredTimeslices.contains TimeSlice.ONE_HOUR
+      if timeSlice == TimeSlice.ONE_HOUR || timeSlice == 'all'
+        dates.push [TimeSlice.ONE_HOUR, "#{@date time} #{@floorHour time}"]
+
+    if configuredTimeslices.contains TimeSlice.ONE_DAY
+      if timeSlice == TimeSlice.ONE_DAY || timeSlice == 'all'
+        dates.push [TimeSlice.ONE_DAY, "#{@date time}"]
 
     return dates
 

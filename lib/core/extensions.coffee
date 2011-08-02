@@ -20,5 +20,9 @@ Array.prototype.sortByKey = (key) ->
 
   return result
 
-
 Array.prototype.equals = (arrayB) -> return !(this < arrayB or arrayB < this)
+
+Array.prototype.contains = (val) ->
+  for i in [0..this.length - 1]
+    return true if this[i] == val
+  return false
