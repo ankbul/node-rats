@@ -32,21 +32,41 @@
     <script type="text/javascript" src="js/views/live.js?v=2"></script>
     <script type="text/javascript" src="js/views/past.js?v=2"></script>
     <script type="text/javascript" src="js/index.js?v=1"></script>
+    
 
 
     <style type="text/css">
-        .live_count, .live_change_rate, .live_ratio {
-            float: left;
-            width: 10%;
-            font-size: 48px;
-            height: 100px;
-            font-weight: bold;
+        .live_title, .live_count, .live_change_rate, .live_ratio {
+          float: left;
+          width: 10%;
+          font-family: Helvetica, arial, sans-serif;
+          height: 100px;
         }
+        .live_count, .live_change_rate, .live_ratio {
+            font-size: 65px;
+            font-weight: bold;
+            color: #ff0096;
+        }
+        
         .live_title {
-            float: left;
             width: 10%;
             font-size: 16px;
-            height: 100px;
+
+        }
+        
+        .three_dee {
+          text-shadow: 0 1px 0 #ff9ad5, 
+                       0 2px 0 #ff72c5,
+                       0 3px 0 #ff49b4,
+                       0 4px 0 #e542a2,
+                       0 5px 0 #cc0078,
+                       0 6px 1px rgba(0,0,0,.1),
+                       0 0 5px rgba(0,0,0,.1),
+                       0 1px 3px rgba(0,0,0,.3),
+                       0 3px 5px rgba(0,0,0,.2),
+                       0 5px 6px rgba(0,0,0,.25),
+                       0 10px 7px rgba(0,0,0,.2),
+                       0 20px 12px rgba(0,0,0,.15);
         }
     </style>
 
@@ -78,10 +98,10 @@
 
 
     <div id = "template_live" style="display: none">
-        <div class="live_count">37</div>
-        <div class="live_title">wallpost</div>
-        <div class="live_change_rate">2%</div>
-        <div class="live_ratio">52%</div>
+        <div class="live_count three_dee">37</div>
+        <div class="live_title three_dee">wallpost</div>
+        <div class="live_change_rate three_dee">2%</div>
+        <div class="live_ratio three_dee">52%</div>
 
         <div>
             <canvas id="live_cvs" width="400" height="250">[No canvas support]</canvas>
