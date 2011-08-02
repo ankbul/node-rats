@@ -23,16 +23,17 @@
         data = d[_i];
         for (_j = 0, _len2 = data.length; _j < _len2; _j++) {
           data2 = data[_j];
-          if (data2 > ymax) {
-            ymax = data2;
+          if (parseInt(data2) > parseInt(ymax)) {
+            ymax = parseInt(data2);
           }
         }
       }
       ymax = parseInt(ymax * 1.10);
+      console.log(tooltips);
       graph.Set('chart.background.barcolor1', 'white');
       graph.Set('chart.background.barcolor2', 'white');
       graph.Set('chart.background.barcolor3', 'white');
-      graph.Set('chart.title.xaxis', 'Time');
+      graph.Set('chart.title.xaxis', 'Time ' + tooltips[0] + ' ' + tooltips[tooltips.length - 1]);
       graph.Set('chart.colors', colors);
       graph.Set('chart.linewidth', 3);
       graph.Set('chart.ymax', ymax);

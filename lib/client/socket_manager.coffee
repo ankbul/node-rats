@@ -11,7 +11,7 @@ class SocketManager
     EVENTS      : 'events'
   }
 
-  constructor: (@port = 3030, @frequency = 2500) ->
+  constructor: (@port = 3030, @frequency = 250) ->
     @clients = []
 
   listen: ->

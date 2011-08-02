@@ -4,7 +4,7 @@ class REvent
     @name          = data.name ? ''
     @path          = data.path ? ''
     @color         = color ? RHistorical.getGraphColor()
-    @measurements  = data.measurements.splice(0, data.measurements.length / 2) ? []
+    @measurements  = data.measurements.slice(0, data.measurements.length / 2) ? []
     @events        = []
     @previousCount = data.previousCount ? 0
 
@@ -44,7 +44,7 @@ class REvent
     @count          = data.count || 0
     @name           = data.name || ''
     @path           = data.path || ''
-    @measurements  = data.measurements.splice(0, data.measurements.length / 2) ? []
+    @measurements  = data.measurements.slice(0, data.measurements.length / 2) ? []
     @previousCount  = data.previousCount ? 0
 
 

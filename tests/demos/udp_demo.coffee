@@ -10,12 +10,13 @@ class UdpDemo
 
   @testMultiUdpSend: (arrayMsg) ->
     for msg in arrayMsg
-      @testUdpSend msg
+      if (Math.random() * 20 > 14)
+        @testUdpSend msg
 
 
 setInterval( () ->
   UdpDemo.testMultiUdpSend ['/?e=popchat/wallpost/tf/clicked', '/?e=popchat/wallpost/mf/clicked', '/?e=popchat/wallpost/yn/clicked', '/?e=popchat/wallpost/rt/clicked']
- , 1
+ , 50
 )
 #UdpDemo.testUdpSend('/?e=popchat/login/new')
 
