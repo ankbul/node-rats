@@ -13,9 +13,9 @@
       this.host = host;
       this.port = port != null ? port : 3030;
       this.container = container;
-      this.currentPath = '';
+      this.currentPath = '/';
       this.currentType = RView.VIEW_LIVE;
-      this.currentTimeSlice = '5s';
+      this.currentTimeSlice = TimeSlice.ONE_MINUTE;
       this.eventData = null;
       this.historyStack = [];
     }
@@ -87,10 +87,9 @@
           this.eventData.update(data.eventList);
         } else {
           this.eventData = new RHistorical(data.eventList);
-          this.eventView = new RPast();
         }
         graphData = this.eventData.getGraphData();
-        return this.eventView.drawGraph(graphData);
+        return RPast.drawGraph(graphData);
       }
     };
     return RManager;

@@ -15,9 +15,6 @@
     $('#timeslice_1minute').click(function() {
       return rManager.changeTimeSlice(TimeSlice.ONE_MINUTE);
     });
-    $('#timeslice_5minute').click(function() {
-      return rManager.changeTimeSlice(TimeSlice.FIVE_MINUTES);
-    });
     $('#timeslice_10minute').click(function() {
       return rManager.changeTimeSlice(TimeSlice.TEN_MINUTES);
     });

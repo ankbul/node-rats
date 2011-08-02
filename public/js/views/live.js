@@ -23,14 +23,29 @@
       }, this));
     };
     RLive.prototype.drawGraph = function(data) {
-      var div, event, topCount, _i, _len, _ref, _results;
+      var div, event, graphData, topCount, _i, _len, _ref, _results;
       console.log(data);
       topCount = data.count;
       _ref = data.events;
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         event = _ref[_i];
-        _results.push($('#' + event.name).length === 0 ? (div = $('#template_live').clone(), div.attr('id', event.name), div.show(), this.addNextClick(div, event), div.find('.live_count').html(event.count), div.find('.live_title').html(event.name), div.find('.live_ratio').html(parseInt(event.count * 100 / topCount) + '%'), $('#data').append(div)) : (div = $('#' + event.name), div.find('.live_count').html(event.count), div.find('.live_title').html(event.name), div.find('.live_ratio').html(parseInt(event.count * 100 / topCount) + '%')));
+        if ($('#' + event.name).length === 0) {
+          div = $('#template_live').clone();
+          div.attr('id', event.name);
+          div.find('#live_cvs').attr('id', 'canvas' + event.name);
+          div.show();
+          this.addNextClick(div, event);
+          $('#data').append(div);
+        } else {
+          div = $('#' + event.name);
+        }
+        div.find('.live_count').html(event.count);
+        div.find('.live_title').html(event.name);
+        div.find('.live_ratio').html(parseInt(event.count * 100 / topCount) + '%');
+        div.find('.live_change_rate').html(parseInt(event.count * 100 / event.previousCount) + '%');
+        graphData = RHistorical.getGraphDataForEvent(event);
+        _results.push(RPast.drawGraph(graphData, 'canvas' + event.name));
       }
       return _results;
     };

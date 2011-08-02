@@ -1,11 +1,12 @@
 class REvent
   constructor: (data, color) ->
-    @count        = data.count ? 0
-    @name         = data.name ? ''
-    @path         = data.path ? ''
-    @color       = color ? 'red'
-    @measurements = data.measurements ? []
-    @events       = []
+    @count         = data.count ? 0
+    @name          = data.name ? ''
+    @path          = data.path ? ''
+    @color         = color ? RHistorical.getGraphColor()
+    @measurements  = data.measurements.splice(0, data.measurements.length / 2) ? []
+    @events        = []
+    @previousCount = data.previousCount ? 0
 
     if data.events
       for ev in data.events
@@ -40,10 +41,14 @@ class REvent
     return null
 
   update: (data) ->
-    @count = data.count || 0
-    @name   = data.name || ''
-    @path   = data.path || ''
-    @measurements = data.measurements ? []
+    @count          = data.count || 0
+    @name           = data.name || ''
+    @path           = data.path || ''
+    @measurements  = data.measurements.splice(0, data.measurements.length / 2) ? []
+    @previousCount  = data.previousCount ? 0
+
+
+
     if !data.events
       @events = []
       return

@@ -1,53 +1,41 @@
 class RPast
 
   constructor : () ->
-    @data = []
-    for i in [1..10]
-      @data.push(null);
 
-  drawGraph : (graphData) ->
+
+  @drawGraph : (graphData, canvasId = 'cvs') ->
 
     data      = graphData.data
     tooltips  = graphData.tooltips
     keys      = graphData.legend
     colors    = graphData.colors
 
-
-#    @data = data
-
-
-    RGraph.Clear(document.getElementById("cvs"))
-    graph = @getGraph('cvs', data, tooltips, keys, colors);
+    RGraph.Clear(document.getElementById(canvasId))
+    graph = @getGraph(canvasId, data, tooltips, keys, colors);
     graph.Draw();
 
-#    for d in data
-#      @data.push d[1]
-#
-#    if @data.length > 100
-#        @data.splice(0,100);
 
-  getGraph : (id, d, tooltips, keys, colors) ->
-
-
-
-
+  @getGraph : (id, d, tooltips, keys, colors) ->
     graph = new RGraph.Line(id, d)
+
+    ymax = -1
+    for data in d
+      for data2 in data
+        if data2 > ymax
+          ymax = data2
+    ymax = parseInt(ymax * 1.10)
+
     graph.Set('chart.background.barcolor1', 'white')
     graph.Set('chart.background.barcolor2', 'white')
     graph.Set('chart.background.barcolor3', 'white')
     graph.Set('chart.title.xaxis', 'Time')
-#    graph.Set('chart.filled', true)
-#    graph.Set('chart.fillstyle', ['#3B5998', '#3B5998','#fff','#faa','#faa','#faa','#3B5998','#faa','#faa','#faa'])
     graph.Set('chart.colors', colors)
     graph.Set('chart.linewidth', 3)
-    graph.Set('chart.ymax', 100)
-    graph.Set('chart.xticks', 25)
+    graph.Set('chart.ymax', ymax)
     graph.Set('chart.linewidth', 5)
     graph.Set('chart.tickmarks', 'dot')
     graph.Set('chart.tooltips', tooltips)
     graph.Set('chart.tooltips.effect', 'contract')
-#    graph.Set('chart.labels.ingraph', d1)
-#    graph.Set('chart.labels', tooltips)
 
 
     graph.Set('chart.key', keys)

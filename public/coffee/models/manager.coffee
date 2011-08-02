@@ -11,9 +11,9 @@ class RManager
 
   constructor: (@host, @port = 3030, @container) ->
 
-    @currentPath        = ''
+    @currentPath        = '/'
     @currentType        = RView.VIEW_LIVE
-    @currentTimeSlice  = '5s'
+    @currentTimeSlice   = TimeSlice.ONE_MINUTE
 
     @eventData = null
 
@@ -97,10 +97,9 @@ class RManager
         @eventData.update(data.eventList)
       else
         @eventData = new RHistorical(data.eventList)
-        @eventView = new RPast()
 
       graphData = @eventData.getGraphData()
-      @eventView.drawGraph graphData
+      RPast.drawGraph graphData
 
 
 

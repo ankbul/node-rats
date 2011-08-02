@@ -1,6 +1,31 @@
 (function() {
   var RHistorical;
   RHistorical = (function() {
+    RHistorical.getGraphDataForEvent = function(event) {
+      var colors, keys, results, t, tooltip, tooltips, _i, _len;
+      results = [];
+      tooltips = [];
+      keys = [];
+      colors = [];
+      keys.push(event.path);
+      colors.push(event.color);
+      results.push(event.measurements.map(function(e) {
+        return e[1];
+      }).reverse());
+      tooltip = event.measurements.map(function(e) {
+        return e[0];
+      }).reverse();
+      for (_i = 0, _len = tooltip.length; _i < _len; _i++) {
+        t = tooltip[_i];
+        tooltips.push(t);
+      }
+      return {
+        data: results,
+        tooltips: tooltips,
+        legend: keys,
+        colors: colors
+      };
+    };
     RHistorical.getGraphColor = function() {
       var colors, index;
       colors = ['rgb(169, 222, 244)', '#3B5998', 'red'];

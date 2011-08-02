@@ -16,9 +16,9 @@ $(document).ready () ->
   $('#timeslice_1minute').click( () ->
     rManager.changeTimeSlice(TimeSlice.ONE_MINUTE)
   )
-  $('#timeslice_5minute').click( () ->
-    rManager.changeTimeSlice(TimeSlice.FIVE_MINUTES)
-  )
+#  $('#timeslice_5minute').click( () ->
+#    rManager.changeTimeSlice(TimeSlice.FIVE_MINUTES)
+#  )
   $('#timeslice_10minute').click( () ->
     rManager.changeTimeSlice(TimeSlice.TEN_MINUTES)
   )

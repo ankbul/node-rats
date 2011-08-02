@@ -10,3 +10,4 @@ target/
 tmp/
 dump.rdb
 .ant-targets-build.xml
+node_modules/*

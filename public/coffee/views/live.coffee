@@ -25,17 +25,21 @@ class RLive
       if $('#' + event.name ).length == 0
         div = $('#template_live').clone()
         div.attr('id', event.name)
+        div.find('#live_cvs').attr('id', 'canvas' + event.name)
         div.show()
         @addNextClick div, event
-        div.find('.live_count').html(event.count)
-        div.find('.live_title').html(event.name)
-        div.find('.live_ratio').html( parseInt(event.count * 100 / topCount) + '%')
         $('#data').append(div)
       else
         div = $('#' + event.name )
-        div.find('.live_count').html(event.count)
-        div.find('.live_title').html(event.name)
-        div.find('.live_ratio').html( parseInt(event.count * 100 / topCount) + '%')
+
+      div.find('.live_count').html(event.count)
+      div.find('.live_title').html(event.name)
+      div.find('.live_ratio').html( parseInt(event.count * 100 / topCount) + '%')
+      div.find('.live_change_rate').html( parseInt(event.count * 100 / event.previousCount) + '%')
+
+      graphData = RHistorical.getGraphDataForEvent(event)
+      RPast.drawGraph graphData, 'canvas' + event.name
+
 
 
 #    $("#chart").empty()

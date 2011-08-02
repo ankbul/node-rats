@@ -38,7 +38,7 @@ class SocketManager
     @clients.forEach( (client, index) ->
       switch client.viewType
         when View.VIEW_LIVE
-          RedisSink.getLiveEventData(client.currentView, (eventView) =>
+          RedisSink.getRollingLiveEventData(client.currentView, (eventView) =>
             client.socket.emit SocketManager.COMMANDS.EVENTS, eventView
           )
         when View.VIEW_HISTORICAL

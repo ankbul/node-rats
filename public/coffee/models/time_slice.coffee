@@ -1,5 +1,8 @@
 class TimeSlice
   @ALL          = 'all'
+  @ONE_SECOND   = '1s'
+  @FIVE_SECONDS = '5s'
+  @TEN_SECONDS  = '10s'
   @ONE_MINUTE   = '1m'
   @FIVE_MINUTES = '5m'
   @TEN_MINUTES  = '10m'
