@@ -11,12 +11,18 @@ class SocketManager
     EVENTS      : 'events'
   }
 
-  constructor: (@port = 3030, @frequency = 2500) ->
+  constructor: (@port = 3030, @frequency = 3000) ->
     @clients = []
 
   listen: ->
     console.log "[SOCKET.IO] listening on port #{@port}"
     @io = socket.listen(@port)
+    # https://github.com/LearnBoost/Socket.IO/wiki/Configuring-Socket.IO
+    @io.set('log level', 1)
+
+    #@io.configure('development', () =>
+    #  @io.set('log level', 1)
+    #)
     @io.sockets.on 'connection', (socket) =>
       client = new SocketClient(socket)
       @clients.push(client)
@@ -33,17 +39,20 @@ class SocketManager
     , @frequency
 
   broadcastClients: ->
-    console.log('trying to broadcast')
+    #console.log('trying to broadcast')
 
     @clients.forEach( (client, index) ->
       switch client.viewType
         when View.VIEW_LIVE
           RedisSink.getRollingLiveEventData(client.currentView, (eventView) =>
             client.socket.emit SocketManager.COMMANDS.EVENTS, eventView
+            console.log '---------------- sending LIVE view'
+            eventView.eventTree.print()
           )
         when View.VIEW_HISTORICAL
           RedisSink.getHistoricalEventData(client.currentView, (eventView) ->
             client.socket.emit SocketManager.COMMANDS.EVENTS, eventView
+            console.log '---------------- sending HISTORICAL view'
           )
         else
           console.error('No View Information')
