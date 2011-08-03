@@ -73,7 +73,6 @@ class RedisSink
       # get events from redis
       @redisClient.mget redisTimePaths, (err, replies) =>
         # create events from the event list
-
         events = []
         currentEvent = null
         currentPath = ''
@@ -87,6 +86,38 @@ class RedisSink
 
         eventListView = new EventListView(view, events)
         eventListViewCallback(eventListView)
+
+
+  @getHistoricalEventData2: (view, eventViewCallback) ->
+    time = new Date()
+    depth = 1
+    @listEvents view, depth, (err, eventPaths) =>
+      if eventPaths.length == 0
+        eventViewCallback(new EventView(view, new Event {}))
+        return
+
+      paths = @getTimePaths(time, view.timeSlice, eventPaths, view.measurements)
+      redisTimePaths = RedisKey.paths(paths.map (element) -> element.timePath)
+
+      @redisClient.mget redisTimePaths, (err, replies) =>
+        events = []
+        currentEvent = null
+        currentPath = ''
+
+        i = 0
+        while i < redisTimePaths.length - 1
+          i++
+          if currentPath != paths[i].path
+            currentPath = paths[i].path
+            currentEvent = new Event({path: paths[i].path})
+            events.push currentEvent
+
+          redisCount = parseInt(replies[i] ? 0)
+          currentEvent.measurements.push [paths[i].time, redisCount]
+
+        eventTree = Event.buildTree view.path, events
+        eventView = new EventView(view, eventTree)
+        eventViewCallback(eventView)
 
 
   # returns an event view
