@@ -43,7 +43,6 @@
         div.find('.live_ratio').html(parseInt(event.count * 100 / topCount) + '%');
         div.find('.live_change_rate').html(parseInt(event.count * 100 / event.previousCount) + '%');
         graphData = event.getGraphData(true);
-        console.log(graphData);
         _results.push(RPast.drawGraph(graphData, 'canvas' + event.name));
       }
       return _results;

@@ -36,9 +36,7 @@ class RLive
       div.find('.live_ratio').html( parseInt(event.count * 100 / topCount) + '%')
       div.find('.live_change_rate').html( parseInt(event.count * 100 / event.previousCount) + '%')
 
-#      graphData = RHistorical.getGraphDataForEvent(event)
       graphData = event.getGraphData(true)
-      console.log graphData
       RPast.drawGraph graphData, 'canvas' + event.name
 
 

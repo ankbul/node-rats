@@ -3,6 +3,65 @@ class RPast
   constructor : () ->
 
 
+  @drawExpandedData : (graphData) ->
+    data      = graphData.data
+    tooltips  = graphData.tooltips
+    keys      = graphData.legend
+    colors    = graphData.colors
+
+
+    topLeftCornerX = 188;
+    topLeftCornerY = 50;
+    width = 200;
+    height = 100;
+
+    $('#data').empty()
+
+
+
+#      context = canvas.getContext('2d')
+#      context.beginPath()
+#      context.rect(topLeftCornerX, topLeftCornerY, width, height)
+#
+#      context.fillStyle = "#8ED6FF"
+#      context.fill()
+#      context.lineWidth = 5
+#      context.strokeStyle = "black"
+#      context.stroke()
+
+
+
+
+    keys.forEach( (key, index) ->
+      div = $('<div>')
+      div.html(key)
+      $('#data').append(div)
+
+      graphValues = data[index]
+
+      graphValues.forEach ( (value, indexData) ->
+        div = $('<div>')
+        div.html(tooltips[indexData] + ' ' + value)
+
+        canvas = $('<canvas>')
+        canvas.drawRect({
+          fillStyle: "#8ED6FF",
+          x: 0, y: 0,
+          width: 200,
+          height: 10,
+          fromCenter: false
+        })
+        div.append(canvas)
+
+        div.hide()
+
+
+
+        $('#data').append(div)
+      )
+    )
+
+
   @drawGraph : (graphData, canvasId = 'cvs') ->
 
     data      = graphData.data
@@ -11,8 +70,21 @@ class RPast
     colors    = graphData.colors
 
     RGraph.Clear(document.getElementById(canvasId))
-    graph = @getGraph(canvasId, data, tooltips, keys, colors);
-    graph.Draw();
+    graph = @getGraph(canvasId, data, tooltips, keys, colors)
+    graph.Draw()
+
+
+
+#    if $('#' + event.name ).length == 0
+#      div = $('#template_live').clone()
+#      div.attr('id', event.name)
+#      div.find('#live_cvs').attr('id', 'canvas' + event.name)
+#      div.show()
+#      @addNextClick div, event
+#      $('#data').append(div)
+#    else
+#      div = $('#' + event.name )
+
 
 
   @getGraph : (id, d, tooltips, keys, colors) ->
@@ -25,14 +97,9 @@ class RPast
           ymax = parseInt(data2)
     ymax = parseInt(ymax * 1.10)
 
-    console.log(tooltips)
-
     graph.Set('chart.background.barcolor1', 'white')
-    graph.Set('chart.background.barcolor2', 'white')
-    graph.Set('chart.background.barcolor3', 'white')
     graph.Set('chart.title.xaxis', 'Time ' + tooltips[0]  + ' ' + tooltips[tooltips.length - 1] )
     graph.Set('chart.colors', colors)
-    graph.Set('chart.linewidth', 3)
     graph.Set('chart.ymax', ymax)
     graph.Set('chart.linewidth', 5)
     graph.Set('chart.tickmarks', 'dot')

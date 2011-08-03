@@ -40,7 +40,7 @@
       for (_i = 0, _len = _ref3.length; _i < _len; _i++) {
         evData = _ref3[_i];
         ev = this.getByPath(evData.path);
-        _results.push(ev === null ? this.events.push(new Event(newEventData)) : ev.update(evData));
+        _results.push(ev === null ? this.events.push(new Event(evData)) : ev.update(evData));
       }
       return _results;
     };

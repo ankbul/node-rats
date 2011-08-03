@@ -6,7 +6,7 @@ TimeSlice     = require('../models/time_slice').TimeSlice
 SocketClient  = require('./socket_client').SocketClient
 
 class SocketManager
-  constructor: (@port = 3030, @frequency = 250) ->
+  constructor: (@port = 3030, @frequency = 2500) ->
     @clients = []
 
   listen: ->

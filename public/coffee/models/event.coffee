@@ -31,7 +31,7 @@ class Event
     for evData in data.events
       ev = @getByPath evData.path
       if ev == null
-        @events.push new Event(newEventData)
+        @events.push new Event(evData)
       else
         ev.update(evData)
 

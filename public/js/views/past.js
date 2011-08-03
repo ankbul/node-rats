@@ -2,6 +2,42 @@
   var RPast;
   RPast = (function() {
     function RPast() {}
+    RPast.drawExpandedData = function(graphData) {
+      var colors, data, height, keys, tooltips, topLeftCornerX, topLeftCornerY, width;
+      data = graphData.data;
+      tooltips = graphData.tooltips;
+      keys = graphData.legend;
+      colors = graphData.colors;
+      topLeftCornerX = 188;
+      topLeftCornerY = 50;
+      width = 200;
+      height = 100;
+      $('#data').empty();
+      return keys.forEach(function(key, index) {
+        var div, graphValues;
+        div = $('<div>');
+        div.html(key);
+        $('#data').append(div);
+        graphValues = data[index];
+        return graphValues.forEach((function(value, indexData) {
+          var canvas;
+          div = $('<div>');
+          div.html(tooltips[indexData] + ' ' + value);
+          canvas = $('<canvas>');
+          canvas.drawRect({
+            fillStyle: "#8ED6FF",
+            x: 0,
+            y: 0,
+            width: 200,
+            height: 10,
+            fromCenter: false
+          });
+          div.append(canvas);
+          div.hide();
+          return $('#data').append(div);
+        }));
+      });
+    };
     RPast.drawGraph = function(graphData, canvasId) {
       var colors, data, graph, keys, tooltips;
       if (canvasId == null) {
@@ -29,13 +65,9 @@
         }
       }
       ymax = parseInt(ymax * 1.10);
-      console.log(tooltips);
       graph.Set('chart.background.barcolor1', 'white');
-      graph.Set('chart.background.barcolor2', 'white');
-      graph.Set('chart.background.barcolor3', 'white');
       graph.Set('chart.title.xaxis', 'Time ' + tooltips[0] + ' ' + tooltips[tooltips.length - 1]);
       graph.Set('chart.colors', colors);
-      graph.Set('chart.linewidth', 3);
       graph.Set('chart.ymax', ymax);
       graph.Set('chart.linewidth', 5);
       graph.Set('chart.tickmarks', 'dot');

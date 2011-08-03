@@ -1,32 +1,20 @@
 class RManager
 
-  @COMMANDS = {
-    CHANGE_VIEW : 'change_view',
-    EVENTS      : 'events'
-  }
-
-  @EVENT_TYPE_LIVE          = 'live'
-  @EVENT_TYPE_HISTORICAL    = 'historical'
-  @EVENT_TYPE_DISTRIBUTION  = 'distribution'
-
   constructor: (@host, @port = 3030, @container) ->
-
     @currentPath        = '/'
     @currentType        = RView.VIEW_LIVE
     @currentTimeSlice   = TimeSlice.ONE_MINUTE
 
     @eventData = null
-
     @historyStack = []
-
 
   start: () ->
     @socket = io.connect @host+":"+@port
 
-    @socket.on 'connection', (data) =>
+    @socket.on Commands.CONNECTED, (data) =>
       @changeView()
 
-    @socket.on RManager.COMMANDS.EVENTS, (data) =>
+    @socket.on Commands.EVENTS, (data) =>
       @gotEvents(data)
 
   goBack : () ->
@@ -38,11 +26,10 @@ class RManager
     @changeView null, null, timeSlice
 
   changePath : (path) ->
-    @historyStack.push(@currentPath)
+    @historyStack.push @currentPath
     @changeView path
 
   changeType : (type) ->
-    alert('changing type ' + type)
     @changeView null, type, null
 
   changeView: (path, type, timeSlice) ->
@@ -62,7 +49,7 @@ class RManager
       timeSlice  : @currentTimeSlice
     }
 
-    @socket.emit RManager.COMMANDS.CHANGE_VIEW, view
+    @socket.emit Commands.CHANGE_VIEW, view
 
   gotEvents: (data) ->
     console.log data
@@ -100,6 +87,7 @@ class RManager
 
       graphData = @eventData.getGraphData()
       RPast.drawGraph graphData
+      RPast.drawExpandedData graphData
 
 
 

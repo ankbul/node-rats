@@ -2,13 +2,6 @@
   var RManager;
   var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
   RManager = (function() {
-    RManager.COMMANDS = {
-      CHANGE_VIEW: 'change_view',
-      EVENTS: 'events'
-    };
-    RManager.EVENT_TYPE_LIVE = 'live';
-    RManager.EVENT_TYPE_HISTORICAL = 'historical';
-    RManager.EVENT_TYPE_DISTRIBUTION = 'distribution';
     function RManager(host, port, container) {
       this.host = host;
       this.port = port != null ? port : 3030;
@@ -21,10 +14,10 @@
     }
     RManager.prototype.start = function() {
       this.socket = io.connect(this.host + ":" + this.port);
-      this.socket.on('connection', __bind(function(data) {
+      this.socket.on(Commands.CONNECTED, __bind(function(data) {
         return this.changeView();
       }, this));
-      return this.socket.on(RManager.COMMANDS.EVENTS, __bind(function(data) {
+      return this.socket.on(Commands.EVENTS, __bind(function(data) {
         return this.gotEvents(data);
       }, this));
     };
@@ -43,7 +36,6 @@
       return this.changeView(path);
     };
     RManager.prototype.changeType = function(type) {
-      alert('changing type ' + type);
       return this.changeView(null, type, null);
     };
     RManager.prototype.changeView = function(path, type, timeSlice) {
@@ -61,7 +53,7 @@
         type: this.currentType,
         timeSlice: this.currentTimeSlice
       };
-      return this.socket.emit(RManager.COMMANDS.CHANGE_VIEW, view);
+      return this.socket.emit(Commands.CHANGE_VIEW, view);
     };
     RManager.prototype.gotEvents = function(data) {
       var graphData;
@@ -89,7 +81,8 @@
           this.eventData = new RHistorical(data.eventList);
         }
         graphData = this.eventData.getGraphData();
-        return RPast.drawGraph(graphData);
+        RPast.drawGraph(graphData);
+        return RPast.drawExpandedData(graphData);
       }
     };
     return RManager;
