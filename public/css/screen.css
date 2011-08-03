@@ -13,23 +13,29 @@
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#606060', endColorstr='#191919',GradientType=0 );
   background: linear-gradient(top, #606060 0%,#191919 100%);
 }
+
 .live_title, .live_count, .live_change_rate, .live_ratio {
-  float: left;
-  width: 10%;
   font-family: Helvetica, arial, sans-serif;
-  height: 100px;
+  position: absolute;
+  left: 0px;
 }
+
 .live_count, .live_change_rate, .live_ratio {
     font-size: 65px;
     font-weight: bold;
-    color: #ff0096;
+    color: #ff0096;    
 }
 
-.live_title {
-    width: 10%;
-    font-size: 16px;
+.template         { position: relative; height: 310px; }
+.live_title       { width: 100%; font-size: 14px; top:0px;left:0px; padding: 13px 0; }
+.template, 
+.live_title       { border-bottom: 1px solid #EEE; }
 
-}
+
+.live_count       { top: 50px; }
+.live_change_rate { top: 128px; }
+.live_ratio       { top: 210px; }
+.chart            { position: absolute; left: 330px; top: 42px; }
 
 .three_dee {
   text-shadow: 0 1px 0 #ff9ad5, 
@@ -47,10 +53,48 @@
 }
 
 .logo {
-background: url(../images/logo.png);
-display: block;
-width: 218px;
-height: 54px;
-margin: 0 auto;
-text-indent: -9000px;
+  background: url(../images/logo.png);
+  display: block;
+  width: 218px;
+  height: 54px;
+  margin: 0 auto;
+  text-indent: -9000px;
+}
+
+.nav {
+  width: 100%;
+  padding: 6px 0;
+  background: #ffffff;
+  background: -moz-linear-gradient(top, #ffffff 0%, #f9f9f9 9%, #efefef 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(9%,#f9f9f9), color-stop(100%,#efefef));
+  background: -webkit-linear-gradient(top, #ffffff 0%,#f9f9f9 9%,#efefef 100%);
+  background: -o-linear-gradient(top, #ffffff 0%,#f9f9f9 9%,#efefef 100%);
+  background: -ms-linear-gradient(top, #ffffff 0%,#f9f9f9 9%,#efefef 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#efefef',GradientType=0 );
+  background: linear-gradient(top, #ffffff 0%,#f9f9f9 9%,#efefef 100%);
+  border-bottom: 1px solid #EEE;
+}
+
+.data_type, .time_slices, .back {
+  margin: 0 auto;
+  text-align: center;
+}
+
+.data_type li, .time_slices li, .navigation li {
+  display: inline-block;
+  margin-right: 20px;
+}
+
+.data_type a, .time_slices a, .back a {
+  text-decoration: none;
+  font-family: helvetica, arial, sans-serif;
+  font-size: 1em;
+  font-weight: normal;
+  text-decoration: none;
+  color: #ff0096;
+  text-shadow: 1px 1px 0 rgba(255,255,255,1.0);
+}
+
+.data_type a:hover, .time_slices a:hover, .back a:hover {
+  text-decoration: underline;
 }
