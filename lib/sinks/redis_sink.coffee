@@ -1,5 +1,6 @@
 require('./../core/extensions')
 redis = require 'redis'
+#async = require 'async'
 config = require('./../../config').config
 
 TimeExploder = require('./../core/time_exploder').TimeExploder
@@ -28,6 +29,20 @@ class RedisKey
 class RedisSink
   @DEPTH_TO_SEND = 2
   @redisClient = redis.createClient(config.redis.port, config.redis.host)
+  @redisPoolSize = 2
+  @redisConnections = []
+  @eventPaths = {}
+
+  @getConnection: () ->
+    return @redisClient
+    if @redisConnections.length == 0
+      for i in [0..@redisPoolSize - 1]
+        @redisConnections.push redis.createClient(config.redis.port, config.redis.host)
+
+    randomConnection = Math.floor(Math.random()*@redisPoolSize)
+    #console.log "random connection = #{randomConnection}"
+    return @redisConnections[randomConnection]
+
 
   # returns the set of known events
   # AB todo - use the in-memory tree, rather than from redis
@@ -36,7 +51,7 @@ class RedisSink
 
     @redisClient.zrangebyscore(RedisKey.metaKeys(), currentDepth, currentDepth + depth, (err, events) =>
       throw new Error(err) if err
-      console.log '[listEvents]', events
+      #console.log '[listEvents]', events
       # filter events based on the view path
       filteredEvents = (event for event in events when event.startsWith view.path)
       listEventsCallback(err, filteredEvents)
@@ -86,12 +101,14 @@ class RedisSink
       [smallerTimeSlice, numMeasurements] = TimeExploder.convertToSmallerTimeIncrement view.timeSlice
       # get 2 smaller measurements
       paths = @getTimePaths(time, smallerTimeSlice, eventPaths, numMeasurements*2)
+#      console.log '[paths]', paths.length
       redisTimePaths = RedisKey.paths(paths.map (element) -> element.timePath)
       #console.log '[redistimepaths]', redisTimePaths
 
       # get events from redis
       @redisClient.mget redisTimePaths, (err, replies) =>
-
+        #console.log err, replies
+#        console.log '[redisTimePaths] length = ', replies.length
         events = []
         currentEvent = null
         currentPath = ''
@@ -99,11 +116,13 @@ class RedisSink
         previousCount = 0
         batch = 1
 
-        for i in [0..redisTimePaths.length-1]
+        i = 0
+        while i < redisTimePaths.length - 1
+          i++
+
           if currentPath != paths[i].path
             currentPath = paths[i].path
             currentEvent = new Event({path: paths[i].path})
-            #console.log '[@getLiveEventData2: currentEvent]', currentEvent
             events.push currentEvent
 
           # all this logic is for tallying up the current (last N measurements) and
@@ -116,20 +135,23 @@ class RedisSink
           batchEnd = batch*numMeasurements*2
 
           redisCount = parseInt(replies[i] ? 0)
-          #set = ''
+          set = ''
           if i < batchEnd - numMeasurements
             count += redisCount
             currentEvent.count = count
-            #set = 'count'
+            set = 'count'
           else
             previousCount += redisCount
             currentEvent.previousCount = previousCount
-            #set = 'previous'
+            set = 'previous'
 
-          #if currentPath != Event.ROOT_PATH
-          #  console.log '[rolling]', "i: #{i}, set: #{set}, redisCount: #{redisCount} currentPath: #{currentPath}, time: #{paths[i].time}, batch: #{batch}, count: #{count}, previous: #{previousCount}"
+#          if currentPath != Event.ROOT_PATH
+#            console.log '[rolling]', "i: #{i}, set: #{set}, redisCount: #{redisCount} currentPath: #{currentPath}, time: #{paths[i].time}, batch: #{batch}, count: #{count}, previous: #{previousCount}"
+
 
           currentEvent.measurements.push [paths[i].time, redisCount]
+
+        #console.log 'here'
 
         eventTree = Event.buildTree view.path, events
         eventView = new EventView(view, eventTree)
@@ -139,7 +161,7 @@ class RedisSink
   # returns an event view
   #  = new View({timeSlice: TimeSlice.ONE_MINUTE, path: Event.ROOT_PATH})
   @getLiveEventData: (view, eventViewCallback) ->
-    #console.log "[RedisSink::getLiveEventData]"
+    console.log "[RedisSink::getLiveEventData]"
     time = new Date()
     @listEvents view, 1, (err, eventPaths) =>
       if eventPaths.length == 0
@@ -179,6 +201,13 @@ class RedisSink
         }
     timePaths
 
+
+  @incrby: (item) ->
+    RedisSink.redisClient.incrby(item[0], item[1])
+
+  @eventCache = {}
+  @useEventCache = false
+
   @send: (event) ->
     # todo - have a class to represent this stuff
     #bucket = event.data.b
@@ -190,12 +219,37 @@ class RedisSink
     value = parseInt(event.data.v ? 1)
     paths = PathExploder.explode(event.data.e)
 
-    # save meta
-    @redisClient.zadd(RedisKey.metaKeys(), path.depth, path.path) for path in paths #when path.depth > 0
+    # save meta, but only when we have to
+    for path in paths
+      if @eventPaths[path.path] == undefined
+        @eventPaths[path.path] = path.depth
+        @redisClient.zadd(RedisKey.metaKeys(), path.depth, path.path)
+
 
     # save increments at various time increments
     timePaths = (@getTimePaths event.time, 'all', paths).map (element) -> element.timePath
+
+    redisTimePaths = timePaths.map (t) -> [RedisKey.path(t), value]
+
+
+    #if @useEventCache
+    #  console.log 'using event cache'
+    #  eventEpoch = Math.floor(event.time.getTime() / 1000)
+    #  nowEpoch = Math.floor(new Date().getTime() / 1000)
+    #  for redisTimePath in redisTimePaths
+    #    @eventCache[eventEpoch] ?= {}
+    #    @eventCache[eventEpoch][redisTimePath] += value
+
+    #  # next, iterate through it and check for any epochs less than now to flush
+    #  for epoch, counters of @eventCache
+    #    if epoch < nowEpoch
+    #      epochTimePaths = [redisKey, redisValue] for redisKey, redisValue of counters
+    #      delete @eventCache[epoch]
+    #      async.forEach(redisTimePaths,  @incrby, (err) -> console.log err)
+
+    #else
     @redisClient.incrby(RedisKey.path(timePath), value) for timePath in timePaths
+      #async.forEach(redisTimePaths,  @incrby, (err) -> console.log err )
 
 
     # build the distribution numbers

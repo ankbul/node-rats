@@ -5,11 +5,13 @@
 <head>
     <title>NODE-RATS</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta name="keywords" content="video chat, chat, meet, friends, game, coins" />
-    <meta name="description" content="scopely video chat. discover new friends, face to face." />
-
+    <meta name="keywords" content="realtime analytics tracking server" />
+    <meta name="description" content="realtime analytics tracking server" />
+    
+    <link type="text/css" rel="stylesheet" href="css/reset.css"/>
     <link type="text/css" rel="stylesheet" href="css/button.css"/>
     <link type="text/css" rel="stylesheet" href="css/bullet.css"/>
+    <link type="text/css" rel="stylesheet" href="css/screen.css"/>
 
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.js"></script>
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.11/jquery-ui.js"></script>
@@ -34,48 +36,13 @@
     <script type="text/javascript" src="js/views/live.js?v=2"></script>
     <script type="text/javascript" src="js/views/past.js?v=2"></script>
     <script type="text/javascript" src="js/index.js?v=1"></script>
-    
-
-
-    <style type="text/css">
-        .live_title, .live_count, .live_change_rate, .live_ratio {
-          float: left;
-          width: 10%;
-          font-family: Helvetica, arial, sans-serif;
-          height: 100px;
-        }
-        .live_count, .live_change_rate, .live_ratio {
-            font-size: 65px;
-            font-weight: bold;
-            color: #ff0096;
-        }
-        
-        .live_title {
-            width: 10%;
-            font-size: 16px;
-
-        }
-        
-        .three_dee {
-          text-shadow: 0 1px 0 #ff9ad5, 
-                       0 2px 0 #ff72c5,
-                       0 3px 0 #ff49b4,
-                       0 4px 0 #e542a2,
-                       0 5px 0 #cc0078,
-                       0 6px 1px rgba(0,0,0,.1),
-                       0 0 5px rgba(0,0,0,.1),
-                       0 1px 3px rgba(0,0,0,.3),
-                       0 3px 5px rgba(0,0,0,.2),
-                       0 5px 6px rgba(0,0,0,.25),
-                       0 10px 7px rgba(0,0,0,.2),
-                       0 20px 12px rgba(0,0,0,.15);
-        }
-    </style>
-
 
 </head>
 
 <body>
+    <div class="header">
+      <span class="logo">rats</span>
+    </div>
     <div>
         <a href="javascript:;" id="timeslice_1minute">1 minute</a>&nbsp;&nbsp;&nbsp;&nbsp;
         <!--<a href="#" id="timeslice_5minute">5 minutes</a>&nbsp;&nbsp;&nbsp;&nbsp;-->
