@@ -1,6 +1,6 @@
 body     { background: url(../images/tile.png); }
 
-.wrapper { background: #FFF; width: 1040px;margin:0 auto;-webkit-box-shadow: 0px 4px 6px 1px rgba(0,0,0,0.6);-moz-box-shadow: 0px 4px 6px 1px rgba(0,0,0,0.6);box-shadow: 0px 4px 6px 1px rgba(0,0,0,0.6);}
+.wrapper { background: #FFF; width: 1040px;margin:0 auto;-webkit-box-shadow: 0px 4px 6px 1px rgba(0,0,0,0.6);-moz-box-shadow: 0px 4px 6px 1px rgba(0,0,0,0.6);box-shadow: 0px 4px 6px 1px rgba(0,0,0,0.6);position: relative;}
 
 .header  {
   width:100%;
@@ -25,7 +25,7 @@ body     { background: url(../images/tile.png); }
 .live_count, .live_change_rate, .live_ratio {
     font-size: 65px;
     font-weight: bold;
-    color: #ff0096;    
+    color: #ff0096;   
 }
 
 .template         { position: relative; height: 310px; }
@@ -54,6 +54,8 @@ body     { background: url(../images/tile.png); }
                0 20px 12px rgba(0,0,0,.15);
 }
 
+.back { position: absolute; border: 1px solid #a70062;-webkit-box-shadow: 0px 2px 4px 1px rgba(0,0,0,0.6);-moz-box-shadow: 0px 2px 4px 1px rgba(0,0,0,0.6);box-shadow: 0px 2px 4px 1px rgba(0,0,0,0.6); padding: 8px 16px;top: 25px;left: 20px;-webkit-border-radius: 4px;-moz-border-radius: 4px;border-radius: 4px;}
+
 .logo {
   background: url(../images/logo.png);
   display: block;
@@ -79,7 +81,7 @@ body     { background: url(../images/tile.png); }
   border-bottom: 1px solid #EEE;
 }
 
-.nav.time {
+.nav.time, .back {
   background: #ffa3d8;
   background: -moz-linear-gradient(top, #ffa3d8 0%, #ff0096 100%);
   background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffa3d8), color-stop(100%,#ff0096));
@@ -100,17 +102,17 @@ body     { background: url(../images/tile.png); }
   display: inline-block;
   margin-right: 20px;
 }
-.time_slices a {
+.time_slices a, .back {
   color: #FFF;
   text-shadow: -1px -1px 0 rgba(0,0,0,.3);
 }
 
-.data_type a, .back a {
+.data_type a,  {
   color: #ff0096;
   text-shadow: 1px 1px 0 rgba(255,255,255,1.0);
 }
 
-.data_type a, .time_slices a, .back a {
+.data_type a, .time_slices a, .back {
   text-decoration: none;
   font-family: helvetica, arial, sans-serif;
   font-size: 1em;
@@ -118,6 +120,6 @@ body     { background: url(../images/tile.png); }
   text-decoration: none;
 }
 
-.data_type a:hover, .time_slices a:hover, .back a:hover {
+.data_type a:hover, .time_slices a:hover, .back:hover {
   text-decoration: underline;
 }
