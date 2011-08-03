@@ -107,7 +107,7 @@ body     { background: url(../images/tile.png); }
   text-shadow: -1px -1px 0 rgba(0,0,0,.3);
 }
 
-.data_type a,  {
+.data_type a  {
   color: #ff0096;
   text-shadow: 1px 1px 0 rgba(255,255,255,1.0);
 }
