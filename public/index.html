@@ -3,7 +3,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" xmlns:fb="http://www.facebook.com/2008/fbml">
 <head>
-    <title>NODE-RATS</title>
+    <title>RATS</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="keywords" content="realtime analytics tracking server" />
     <meta name="description" content="realtime analytics tracking server" />
@@ -40,43 +40,43 @@
 </head>
 
 <body>
+    <div class="wrapper">
     <div class="header">
-      <span class="logo">rats</span>
+        <span class="logo">rats</span>
     </div>
-    <div>
-        <a href="javascript:;" id="timeslice_1minute">1 minute</a>&nbsp;&nbsp;&nbsp;&nbsp;
-        <!--<a href="#" id="timeslice_5minute">5 minutes</a>&nbsp;&nbsp;&nbsp;&nbsp;-->
-        <a href="javascript:;" id="timeslice_10minute">10 minutes</a>&nbsp;&nbsp;&nbsp;&nbsp;
-        <a href="javascript:;" id="timeslice_1hour">1 hour</a>&nbsp;&nbsp;&nbsp;&nbsp;
-        <a href="javascript:;" id="timeslice_1day">1 day</a>&nbsp;&nbsp;&nbsp;&nbsp;
-        <a href="javascript:;" id="navigate_back">Back</a>&nbsp;&nbsp;&nbsp;&nbsp;
+    <div class="nav time">
+        <ul class="time_slices">
+          <li><a href="javascript:;" id="timeslice_1minute">1 minute</a></li>
+          <li><a href="javascript:;" id="timeslice_10minute">1 minute</a></li>
+          <li><a href="javascript:;" id="timeslice_1hour">1 hour</a></li>
+          <li><a href="javascript:;" id="timeslice_1day">1 day</a></li>
+        </ul>
     </div>
-
-    <div>
-        <a href="javascript:;" id="type_past">Past</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <a href="javascript:;" id="type_live">Live</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <a href="javascript:;" id="type_future">Future</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-
-
+    <div class="nav">
+        <ul class="data_type">
+          <li><a href="javascript:;" id="type_past">Past</a></li>
+          <li><a href="javascript:;" id="type_live">Live</a></li>
+        </ul>
     </div>
-
-    <br /><br />
-
-
+    
+    <a class="back" href="javascript:;" id="navigate_back">Back</a>
+    
     <div id="data"></div>
+    
+    <div class="big_chart">
+      <canvas id="cvs" width="800" height="450">[No canvas support]</canvas>
+    </div>
 
-    <canvas id="cvs" width="800" height="450">[No canvas support]</canvas>
-
-
-    <div id = "template_live" style="display: none">
+    <div id="template_live" style="display: none" class="template">
+        <div class="live_title">wallpost</div>
         <div class="live_count three_dee">37</div>
-        <div class="live_title three_dee">wallpost</div>
         <div class="live_change_rate three_dee">2%</div>
         <div class="live_ratio three_dee">52%</div>
 
-        <div>
+        <div class="chart">
             <canvas id="live_cvs" width="400" height="250">[No canvas support]</canvas>
         </div>
+        
         <br style="clear: both" />
 
     </div>
@@ -131,7 +131,7 @@
 //
 //    drawGraph();
 </script>
-
+</div>
 
 </body>
 </html>
