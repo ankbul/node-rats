@@ -19,41 +19,42 @@ body     { background: url(../images/tile.png); }
 .live_title, .live_count, .live_change_rate, .live_ratio {
   font-family: Helvetica, arial, sans-serif;
   position: absolute;
-  left: 40px;
+  left: 75px;
 }
 
 .live_count, .live_change_rate, .live_ratio {
-    font-size: 65px;
+    font-size: 75px;
     font-weight: bold;
-    color: #ff0096;   
+    color: #ff0096;
 }
 
-.template         { position: relative; height: 310px; }
-.live_title       { width: 100%; font-size: 14px; top:0px;left:0px; padding: 13px 0; text-indent: 40px;}
+
+.template          { position: relative; height: 310px; }
+.live_title        { width: 100%; font-size: 14px; top:0px;left:0px; padding: 13px 0; text-indent: 40px;}
 .template, 
-.live_title       { border-bottom: 1px solid #EEE; }
+.live_title        { border-bottom: 1px solid #EEE; font-size: 20px; font-weight: bold; cursor: pointer; color: #00c176; }
+.live_title:hover  { text-decoration: underline; }
 
 
-.live_count       { top: 50px; }
-.live_change_rate { top: 128px; }
-.live_ratio       { top: 210px; }
-.chart            { position: absolute; left: 390px; top: 42px; }
-.big_chart        { padding: 20px;}
+.live_count        { top: 50px; }
+.live_change_rate  { top: 128px; }
+.live_ratio        { top: 210px; }
+.chart             { position: absolute; left: 390px; top: 42px; }
+.big_chart         { padding: 20px;}
 
-.three_dee {
-  text-shadow: 0 1px 0 #ff9ad5, 
-               0 2px 0 #ff72c5,
-               0 3px 0 #ff49b4,
-               0 4px 0 #e542a2,
-               0 5px 0 #cc0078,
-               0 6px 1px rgba(0,0,0,.1),
-               0 0 5px rgba(0,0,0,.1),
-               0 1px 3px rgba(0,0,0,.3),
-               0 3px 5px rgba(0,0,0,.2),
-               0 5px 6px rgba(0,0,0,.25),
-               0 10px 7px rgba(0,0,0,.2),
-               0 20px 12px rgba(0,0,0,.15);
-}
+.three_dee         { text-shadow: 0 1px 0 #ff9ad5, 
+                     0 2px 0 #ff72c5,
+                     0 3px 0 #ff49b4,
+                     0 4px 0 #e542a2,
+                     0 5px 0 #cc0078,
+                     0 6px 1px rgba(0,0,0,.1),
+                     0 0 5px rgba(0,0,0,.1),
+                     0 1px 3px rgba(0,0,0,.3),
+                     0 3px 5px rgba(0,0,0,.2),
+                     0 5px 6px rgba(0,0,0,.25),
+                     0 10px 7px rgba(0,0,0,.2),
+                     0 20px 12px rgba(0,0,0,.15);
+                   }
 
 .back { position: absolute; border: 1px solid #a70062;-webkit-box-shadow: 0px 2px 4px 1px rgba(0,0,0,0.6);-moz-box-shadow: 0px 2px 4px 1px rgba(0,0,0,0.6);box-shadow: 0px 2px 4px 1px rgba(0,0,0,0.6); padding: 8px 16px;top: 25px;left: 20px;-webkit-border-radius: 4px;-moz-border-radius: 4px;border-radius: 4px;}
 
@@ -65,8 +66,6 @@ body     { background: url(../images/tile.png); }
   margin: 0 auto;
   text-indent: -9000px;
 }
-
-
 
 .nav {
   width: 100%;
@@ -92,9 +91,6 @@ body     { background: url(../images/tile.png); }
   background: linear-gradient(top, #ffa3d8 0%,#ff0096 100%);
 }
 
-
-
-
 .data_type, .time_slices, .back {
   margin: 0 auto;
   text-align: center;
@@ -105,6 +101,7 @@ body     { background: url(../images/tile.png); }
   text-align: center;
   padding: 10px 25px;
 }
+
 .time_slices a, .back {
   color: #FFF;
   text-shadow: -1px -1px 0 rgba(0,0,0,.3);
@@ -115,7 +112,7 @@ body     { background: url(../images/tile.png); }
   text-shadow: 1px 1px 0 rgba(255,255,255,1.0);
 }
 
-.data_type a, .time_slices a, .back {
+.data_type a, .time_slices a, .back, .label  {
   text-decoration: none;
   font-family: helvetica, arial, sans-serif;
   font-size: 1em;
@@ -138,3 +135,45 @@ body     { background: url(../images/tile.png); }
 }
 
 .time_slices li:last-child {border-right:1px solid #ff83cc;}
+
+.label             { font-size: 13px; display: block; position: absolute; right:980px; -webkit-transform: rotate(315deg);	-moz-transform: rotate(315deg); -ms-transform: rotate(315deg);-o-transform: rotate(315deg);transform: rotate(315deg);color:#aaa;}
+.count.label       { top: 100px; }
+.change_rate.label { top: 179px; }
+.ratio.label       { top: 262px; }
+
+
+.RGraph_png {
+}
+
+.RGraph_palette {
+}
+
+.RGraph_tooltip {
+}
+
+.RGraph_contextmenu {
+}
+
+.RGraph_contextmenu_background {
+}
+
+.RGraph_contextmenu_item {
+}
+
+.RGraph_zoom_window {
+}
+
+.RGraph_zoomed_canvas {
+}
+
+.RGraph_zoomed_area {
+}
+
+.ModalDialog_background {
+}
+
+.ModalDialog_dialog {
+}
+
+.ModalDialog_topbar {
+}

@@ -13,8 +13,8 @@
     <link type="text/css" rel="stylesheet" href="css/bullet.css"/>
     <link type="text/css" rel="stylesheet" href="css/screen.css"/>
 
-    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.js"></script>
-    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.11/jquery-ui.js"></script>
+    <script type="text/javascript" src="js/lib/jquery-1.6.2.min.js"></script>
+    <script type="text/javascript" src="js/lib/jquery-ui-1.8.14.custom.min.js"></script>
     <script type="text/javascript" src="js/lib/socket.io-0.7.2.js"></script>
     <script type="text/javascript" src="js/lib/d3.js"></script>
     <script type="text/javascript" src="js/lib/rgraph/RGraph.line.js"></script>
@@ -70,9 +70,13 @@
     </div>
 
     <div id="template_live" style="display: none" class="template">
+        
         <div class="live_title">wallpost</div>
+        <span class="count label">count</span>
         <div class="live_count three_dee">37</div>
+        <span class="change_rate label">change</span>
         <div class="live_change_rate three_dee">2%</div>
+        <span class="ratio label">slice</span>
         <div class="live_ratio three_dee">52%</div>
 
         <div class="chart">
