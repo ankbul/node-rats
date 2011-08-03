@@ -38,6 +38,7 @@ body     { background: url(../images/tile.png); }
 .live_change_rate { top: 128px; }
 .live_ratio       { top: 210px; }
 .chart            { position: absolute; left: 390px; top: 42px; }
+.big_chart        { padding: 20px;}
 
 .three_dee {
   text-shadow: 0 1px 0 #ff9ad5, 
