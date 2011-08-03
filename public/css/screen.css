@@ -1,6 +1,9 @@
+.wrapper {width: 900px;margin:0 auto;}
+
 .header {
   width:100%;
-  height:85px;
+  height:72px;
+  padding-top: 16px;
   background: #606060;
   background: -moz-linear-gradient(top, #606060 0%, #191919 100%);
   background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#606060), color-stop(100%,#191919));
@@ -41,4 +44,13 @@
                0 5px 6px rgba(0,0,0,.25),
                0 10px 7px rgba(0,0,0,.2),
                0 20px 12px rgba(0,0,0,.15);
+}
+
+.logo {
+background: url(../images/logo.png);
+display: block;
+width: 218px;
+height: 54px;
+margin: 0 auto;
+text-indent: -9000px;
 }
