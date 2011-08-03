@@ -70,7 +70,6 @@ body     { background: url(../images/tile.png); }
 
 .nav {
   width: 100%;
-  padding: 6px 0;
   background: #ffffff;
   background: -moz-linear-gradient(top, #ffffff 0%, #f9f9f9 9%, #efefef 100%);
   background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(9%,#f9f9f9), color-stop(100%,#efefef));
@@ -94,6 +93,8 @@ body     { background: url(../images/tile.png); }
 }
 
 
+
+
 .data_type, .time_slices, .back {
   margin: 0 auto;
   text-align: center;
@@ -101,7 +102,8 @@ body     { background: url(../images/tile.png); }
 
 .data_type li, .time_slices li, .navigation li {
   display: inline-block;
-  margin-right: 20px;
+  text-align: center;
+  padding: 10px 25px;
 }
 .time_slices a, .back {
   color: #FFF;
@@ -124,3 +126,15 @@ body     { background: url(../images/tile.png); }
 .data_type a:hover, .time_slices a:hover, .back:hover {
   text-decoration: underline;
 }
+
+.data_type li {
+  border-left:1px solid #ddd;
+}
+
+.data_type li:last-child {border-right:1px solid #ddd;}
+
+.time_slices li {
+  border-left:1px solid #ff83cc;
+}
+
+.time_slices li:last-child {border-right:1px solid #ff83cc;}
