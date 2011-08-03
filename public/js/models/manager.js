@@ -56,34 +56,27 @@
       return this.socket.emit(Commands.CHANGE_VIEW, view);
     };
     RManager.prototype.gotEvents = function(data) {
-      var graphData;
       console.log(data);
       if (this.currentPath !== data.view.path || this.currentType !== data.view.type || this.currentTimeSlice !== data.view.timeSlice) {
         console.log('View Information Does not match');
         return;
       }
-      if (data.view.type === RView.VIEW_LIVE) {
-        if (this.eventData) {
-          this.eventData.update(data.eventTree);
-          return this.eventView.updateGraph(this.eventData);
-        } else {
-          this.eventData = new Event(data.eventTree);
-          this.eventView = new RLive(this.currentPath, this.currentTimeSlice);
-          $(this.eventView).bind(RLive.EVENT_NAVIGATE, __bind(function(e, data) {
-            return this.changePath(data.path);
-          }, this));
-          return this.eventView.drawGraph(this.eventData);
+      if (this.eventData) {
+        this.eventData.update(data.eventTree);
+      } else {
+        this.eventData = new Event(data.eventTree);
+        switch (data.view.type) {
+          case RView.VIEW_LIVE:
+            this.eventView = new RLive(this.currentPath, this.currentTimeSlice);
+            $(this.eventView).bind(RLive.EVENT_NAVIGATE, __bind(function(e, data) {
+              return this.changePath(data.path);
+            }, this));
+            break;
+          case RView.VIEW_HISTORICAL:
+            this.eventView = new RPast(this.currentPath, this.currentTimeSlice);
         }
-      } else if (data.view.type = RView.VIEW_HISTORICAL) {
-        if (this.eventData) {
-          this.eventData.update(data.eventList);
-        } else {
-          this.eventData = new RHistorical(data.eventList);
-        }
-        graphData = this.eventData.getGraphData();
-        RPast.drawGraph(graphData);
-        return RPast.drawExpandedData(graphData);
       }
+      return this.eventView.draw(this.eventData);
     };
     return RManager;
   })();

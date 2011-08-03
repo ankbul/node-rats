@@ -7,22 +7,8 @@
       this.path = path;
       this.timeSlice = timeSlice;
     }
-    RLive.prototype.addNextClick = function(element, event) {
-      return element.click(__bind(function() {
-        var data;
-        if (event.events.length > 0) {
-          data = {
-            path: event.path,
-            type: RManager.EVENT_TYPE_LIVE,
-            timeSlice: this.timeSlice
-          };
-          return $(this).trigger(RLive.EVENT_NAVIGATE, data);
-        }
-      }, this));
-    };
-    RLive.prototype.drawGraph = function(data) {
+    RLive.prototype.draw = function(data) {
       var div, event, graphData, topCount, _i, _len, _ref, _results;
-      console.log(data);
       topCount = data.count;
       _ref = data.events;
       _results = [];
@@ -43,12 +29,22 @@
         div.find('.live_ratio').html(parseInt(event.count * 100 / topCount) + '%');
         div.find('.live_change_rate').html(parseInt(event.count * 100 / event.previousCount) + '%');
         graphData = event.getGraphData(true);
-        _results.push(RPast.drawGraph(graphData, 'canvas' + event.name));
+        _results.push(Graph.drawLineGraph(graphData, 'canvas' + event.name));
       }
       return _results;
     };
-    RLive.prototype.updateGraph = function(data) {
-      return this.drawGraph(data);
+    RLive.prototype.addNextClick = function(element, event) {
+      return element.click(__bind(function() {
+        var data;
+        if (event.events.length > 0) {
+          data = {
+            path: event.path,
+            type: RManager.EVENT_TYPE_LIVE,
+            timeSlice: this.timeSlice
+          };
+          return $(this).trigger(RLive.EVENT_NAVIGATE, data);
+        }
+      }, this));
     };
     return RLive;
   })();

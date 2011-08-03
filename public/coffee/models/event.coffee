@@ -58,6 +58,39 @@ class Event
 
     return graphData
 
+  getSubEventsGraphData : (type = RView.ALL_DATA) ->
+    results   = []
+    tooltips  = []
+    keys      = []
+    colors    = []
+    for ev in @events
+      measurements  = ev.measurements.map((e) -> return e[1])
+      tooltip       = ev.measurements.map((e) -> return e[0])
+
+      switch type
+        when RView.NOW_DATA
+          measurements = measurements.slice(0, measurements.length / 2)
+          tooltip      = tooltip.slice(0, tooltip.length / 2)
+        when RView.PAST_DATA
+          measurements = measurements.slice(measurements.length / 2)
+          tooltip      = tooltip.slice(tooltip.length / 2)
+
+      results.push measurements.reverse()
+      tooltips.push(t) for t in tooltip.reverse()
+      keys.push(ev.path)
+      colors.push(ev.color)
+
+    graphData = {
+      data      : results,
+      tooltips  : tooltips,
+      legend    : keys,
+      colors    : colors
+    }
+
+    return graphData
+
+
+
 window.Event = Event
 
 

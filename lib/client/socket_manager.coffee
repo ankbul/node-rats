@@ -35,7 +35,7 @@ class SocketManager
             client.socket.emit Commands.EVENTS, eventView
           )
         when View.VIEW_HISTORICAL
-          RedisSink.getHistoricalEventData(client.currentView, (eventView) ->
+          RedisSink.getHistoricalEventData2(client.currentView, (eventView) ->
             client.socket.emit Commands.EVENTS, eventView
           )
         else

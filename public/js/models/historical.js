@@ -1,6 +1,9 @@
 (function() {
   var RHistorical;
   RHistorical = (function() {
+    RHistorical.ALL_DATA = 'all';
+    RHistorical.NOW_DATA = 'now';
+    RHistorical.PAST_DATA = 'past';
     RHistorical.getGraphDataForEvent = function(event) {
       var colors, keys, results, t, tooltip, tooltips, _i, _len;
       results = [];
@@ -40,8 +43,11 @@
         this.events.push(new Event(ev, RHistorical.getGraphColor()));
       }
     }
-    RHistorical.prototype.getGraphData = function() {
-      var colors, ev, keys, results, t, tooltip, tooltips, _i, _j, _len, _len2, _ref;
+    RHistorical.prototype.getGraphData = function(type) {
+      var colors, ev, keys, measurements, results, t, tooltip, tooltips, _i, _j, _len, _len2, _ref, _ref2;
+      if (type == null) {
+        type = RHistorical.ALL_DATA;
+      }
       results = [];
       tooltips = [];
       keys = [];
@@ -49,18 +55,29 @@
       _ref = this.events;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         ev = _ref[_i];
-        keys.push(ev.path);
-        colors.push(ev.color);
-        results.push(ev.measurements.map(function(e) {
+        measurements = ev.measurements.map(function(e) {
           return e[1];
-        }).reverse());
+        });
         tooltip = ev.measurements.map(function(e) {
           return e[0];
-        }).reverse();
-        for (_j = 0, _len2 = tooltip.length; _j < _len2; _j++) {
-          t = tooltip[_j];
+        });
+        switch (type) {
+          case RHistorical.NOW_DATA:
+            measurements = measurements.slice(0, measurements.length / 2);
+            tooltip = tooltip.slice(0, tooltip.length / 2);
+            break;
+          case RHistorical.PAST_DATA:
+            measurements = measurements.slice(measurements.length / 2);
+            tooltip = tooltip.slice(tooltip.length / 2);
+        }
+        results.push(measurements.reverse());
+        _ref2 = tooltip.reverse();
+        for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
+          t = _ref2[_j];
           tooltips.push(t);
         }
+        keys.push(ev.path);
+        colors.push(ev.color);
       }
       return {
         data: results,

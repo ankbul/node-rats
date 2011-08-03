@@ -66,30 +66,49 @@ class RManager
       console.log('View Information Does not match')
       return
 
-    if data.view.type == RView.VIEW_LIVE
-      if @eventData
-        @eventData.update(data.eventTree)
-        @eventView.updateGraph @eventData
-      else
-        @eventData = new Event(data.eventTree)
-        @eventView = new RLive(@currentPath, @currentTimeSlice)
-        $(@eventView).bind(RLive.EVENT_NAVIGATE, (e, data) =>
-          @changePath data.path
-        )
-        @eventView.drawGraph @eventData
+    if @eventData
+      @eventData.update(data.eventTree)
+    else
+      @eventData = new Event(data.eventTree)
+      switch data.view.type
+        when RView.VIEW_LIVE
+          @eventView = new RLive(@currentPath, @currentTimeSlice)
+          $(@eventView).bind(RLive.EVENT_NAVIGATE, (e, data) =>
+            @changePath data.path
+          )
+        when RView.VIEW_HISTORICAL
+          @eventView = new RPast(@currentPath, @currentTimeSlice)
+
+    @eventView.draw @eventData
 
 
-    else if data.view.type = RView.VIEW_HISTORICAL
-      if @eventData
-        @eventData.update(data.eventList)
-      else
-        @eventData = new RHistorical(data.eventList)
-
-      graphData = @eventData.getGraphData()
-      RPast.drawGraph graphData
-      RPast.drawExpandedData graphData
 
 
+#    if data.view.type == RView.VIEW_LIVE
+#      if @eventData
+#        @eventData.update(data.eventTree)
+#        @eventView.updateGraph @eventData
+#      else
+#        @eventData = new Event(data.eventTree)
+#        @eventView = new RLive(@currentPath, @currentTimeSlice)
+#        $(@eventView).bind(RLive.EVENT_NAVIGATE, (e, data) =>
+#          @changePath data.path
+#        )
+#        @eventView.drawGraph @eventData
+#
+#
+#    else if data.view.type = RView.VIEW_HISTORICAL
+#      if @eventData
+#        @eventData.update(data.eventList)
+#      else
+#        @eventData = new RHistorical(data.eventList)
+#
+#      nowData   = @eventData.getGraphData(RHistorical.NOW_DATA)
+#      prevData  = @eventData.getGraphData(RHistorical.PAST_DATA)
+#
+#
+#      RPast.drawGraph nowData, 'past'
+#      RPast.drawExpandedData prevData
 
 window.RManager = RManager
 
