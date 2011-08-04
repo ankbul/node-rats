@@ -136,7 +136,7 @@ body     { background: url(../images/tile.png); }
 
 .time_slices li:last-child {border-right:1px solid #ff83cc;}
 
-.label             { font-size: 13px; display: block; position: absolute; right:980px; -webkit-transform: rotate(315deg);	-moz-transform: rotate(315deg); -ms-transform: rotate(315deg);-o-transform: rotate(315deg);transform: rotate(315deg);color:#aaa;}
+.label             { font-size: 13px; display: block; position: absolute; right:980px; -webkit-transform: rotate(315deg);	-moz-transform: rotate(315deg); -ms-transform: rotate(315deg);-o-transform: rotate(315deg);transform: rotate(315deg);color:#ccc;}
 .count.label       { top: 100px; }
 .change_rate.label { top: 179px; }
 .ratio.label       { top: 262px; }

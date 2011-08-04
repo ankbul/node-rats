@@ -1,7 +1,7 @@
 class Event
 
   @getGraphColor : () ->
-    colors = ['rgb(169, 222, 244)', '#3B5998', 'red']
+    colors = ['#00c176)', '#ff0096', '#ff0096']
     index = Math.floor(Math.random() * colors.length)
     return colors[index]
 
