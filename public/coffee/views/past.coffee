@@ -1,34 +1,20 @@
 class RPast
 
-  draw : (rootEvent) ->
+  @MAIN_GRAPH_WIDTH   = 800
+  @MAIN_GRAPH_HEIGHT  = 450
 
-#    data      = graphData.data
-#    tooltips  = graphData.tooltips
-#    keys      = graphData.legend
-#    colors    = graphData.colors
-#
-#    if $('#' +canvasId).length == 0
-#      canvas = $('<canvas>')
-#      canvas.attr('id', canvasId)
-#      canvas.attr('width','800')
-#      canvas.attr('height','450')
-#      $('#data').append(canvas)
-#
-#    RGraph.Clear(document.getElementById(canvasId))
-#    graph = @getLineGraph(canvasId, data, tooltips, keys, colors)
-#    graph.Draw()
+  draw : (rootEvent) ->
 
     # Draw the graph
     if $('#pastCanvas' ).length == 0
       canvas = $('<canvas>')
       canvas.attr('id', 'pastCanvas')
+      canvas.attr('width', RPast.MAIN_GRAPH_WIDTH)
+      canvas.attr('height', RPast.MAIN_GRAPH_HEIGHT)
       $('#data').append(canvas)
-
 
     graphData = rootEvent.getSubEventsGraphData(RView.NOW_DATA)
     Graph.drawLineGraph graphData, 'pastCanvas'
-
-
 
     # Draw the expanded
     for event in rootEvent.events
@@ -40,8 +26,8 @@ class RPast
 
         canvas = $('<canvas>')
         canvas.attr('id', 'canvas' + event.name)
-        canvas.attr('width', 800)
-        canvas.attr('height', 1000)
+        canvas.attr('width', 900  )
+        canvas.attr('height', 1200)
         div.append(canvas)
 
         $('#data').append(div)
@@ -49,7 +35,12 @@ class RPast
         div     = $('#' + event.name )
         canvas  = $('#canvas' + event.name)
 
-      graphData = event.getGraphData()
+
+      graphData = event.getGraphData(RView.PAST_DATA)
+
+      console.log(graphData)
+
+
       Graph.drawBarGraph graphData, 'canvas' + event.name
 
 

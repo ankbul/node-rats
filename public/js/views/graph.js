@@ -42,18 +42,16 @@
       }
       RGraph.Clear(document.getElementById(canvasId));
       graph = new RGraph.HBar(canvasId, data);
-      graph.Set('chart.strokestyle', 'rgba(0,0,0,0)');
+      graph.Set('chart.strokestyle', 'white');
       graph.Set('chart.gutter.left', 275);
       graph.Set('chart.gutter.right', 10);
-      graph.Set('chart.background.grid.autofit', true);
+      graph.Set('chart.background.grid.autofit', 50);
+      graph.Set('chart.vmargin', 5);
       graph.Set('chart.title', keys);
       graph.Set('chart.labels', tooltips);
-      graph.Set('chart.shadow', true);
-      graph.Set('chart.shadow.color', 'gray');
-      graph.Set('chart.shadow.offsetx', 0);
-      graph.Set('chart.shadow.offsety', 0);
-      graph.Set('chart.shadow.blur', 15);
-      graph.Set('chart.colors', ['red']);
+      graph.Set('chart.colors', ['#1A87D5']);
+      graph.Set('chart.background.grid', false);
+      graph.Set('chart.background.grid.vsize', 5);
       return graph.Draw();
     };
     return Graph;

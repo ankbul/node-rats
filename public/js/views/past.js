@@ -2,11 +2,15 @@
   var RPast;
   RPast = (function() {
     function RPast() {}
+    RPast.MAIN_GRAPH_WIDTH = 800;
+    RPast.MAIN_GRAPH_HEIGHT = 450;
     RPast.prototype.draw = function(rootEvent) {
       var canvas, div, event, graphData, _i, _len, _ref, _results;
       if ($('#pastCanvas').length === 0) {
         canvas = $('<canvas>');
         canvas.attr('id', 'pastCanvas');
+        canvas.attr('width', RPast.MAIN_GRAPH_WIDTH);
+        canvas.attr('height', RPast.MAIN_GRAPH_HEIGHT);
         $('#data').append(canvas);
       }
       graphData = rootEvent.getSubEventsGraphData(RView.NOW_DATA);
@@ -22,15 +26,16 @@
           div.html(event.name);
           canvas = $('<canvas>');
           canvas.attr('id', 'canvas' + event.name);
-          canvas.attr('width', 800);
-          canvas.attr('height', 1000);
+          canvas.attr('width', 900);
+          canvas.attr('height', 1200);
           div.append(canvas);
           $('#data').append(div);
         } else {
           div = $('#' + event.name);
           canvas = $('#canvas' + event.name);
         }
-        graphData = event.getGraphData();
+        graphData = event.getGraphData(RView.PAST_DATA);
+        console.log(graphData);
         _results.push(Graph.drawBarGraph(graphData, 'canvas' + event.name));
       }
       return _results;

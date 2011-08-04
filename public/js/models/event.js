@@ -55,7 +55,7 @@
       }
       return null;
     };
-    Event.prototype.getGraphData = function(showPrevious) {
+    Event.prototype.getGraphLiveData = function(showPrevious) {
       var graphData;
       if (showPrevious == null) {
         showPrevious = false;
@@ -87,6 +87,33 @@
         graphData.legend = ['past'].concat(graphData.legend);
       }
       return graphData;
+    };
+    Event.prototype.getGraphData = function(type) {
+      var graphData, measurements, tooltip;
+      if (type == null) {
+        type = RView.ALL_DATA;
+      }
+      measurements = this.measurements.map(function(e) {
+        return e[1];
+      });
+      tooltip = this.measurements.map(function(e) {
+        return e[0];
+      });
+      switch (type) {
+        case RView.NOW_DATA:
+          measurements = measurements.slice(0, measurements.length / 2);
+          tooltip = tooltip.slice(0, tooltip.length / 2);
+          break;
+        case RView.PAST_DATA:
+          measurements = measurements.slice(measurements.length / 2);
+          tooltip = tooltip.slice(tooltip.length / 2);
+      }
+      return graphData = {
+        data: measurements,
+        tooltips: tooltip,
+        legend: this.path,
+        colors: this.color
+      };
     };
     Event.prototype.getSubEventsGraphData = function(type) {
       var colors, ev, graphData, keys, measurements, results, t, tooltip, tooltips, _i, _j, _len, _len2, _ref, _ref2;

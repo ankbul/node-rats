@@ -41,7 +41,7 @@ class Event
         return event
     return null
 
-  getGraphData: (showPrevious = false) ->
+  getGraphLiveData: (showPrevious = false) ->
     @nowData      = @measurements.slice(0, @measurements.length / 2)
     @previousData = @measurements.slice(@measurements.length / 2)
     graphData = {
@@ -57,6 +57,25 @@ class Event
       graphData.legend    = ['past'].concat(graphData.legend)
 
     return graphData
+
+  getGraphData : (type = RView.ALL_DATA) ->
+    measurements  = @measurements.map((e) -> return e[1])
+    tooltip       = @measurements.map((e) -> return e[0])
+
+    switch type
+      when RView.NOW_DATA
+        measurements = measurements.slice(0, measurements.length / 2)
+        tooltip      = tooltip.slice(0, tooltip.length / 2)
+      when RView.PAST_DATA
+        measurements = measurements.slice(measurements.length / 2)
+        tooltip      = tooltip.slice(tooltip.length / 2)
+
+    graphData = {
+      data      : measurements,
+      tooltips  : tooltip,
+      legend    : @path,
+      colors    : @color
+    }
 
   getSubEventsGraphData : (type = RView.ALL_DATA) ->
     results   = []

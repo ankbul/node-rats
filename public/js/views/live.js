@@ -8,12 +8,17 @@
       this.timeSlice = timeSlice;
     }
     RLive.prototype.draw = function(data) {
-      var div, event, graphData, topCount, _i, _len, _ref, _results;
-      topCount = data.count;
+      var div, event, graphData, topCount, _i, _j, _len, _len2, _ref, _ref2, _results;
+      topCount = -1;
       _ref = data.events;
-      _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         event = _ref[_i];
+        topCount = Math.max(event.count, topCount);
+      }
+      _ref2 = data.events;
+      _results = [];
+      for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
+        event = _ref2[_j];
         if ($('#' + event.name).length === 0) {
           div = $('#template_live').clone();
           div.attr('id', event.name);
@@ -26,9 +31,17 @@
         }
         div.find('.live_count').html(event.count);
         div.find('.live_title').html(event.name);
-        div.find('.live_ratio').html(parseInt(event.count * 100 / topCount) + '%');
-        div.find('.live_change_rate').html(parseInt(event.count * 100 / event.previousCount) + '%');
-        graphData = event.getGraphData(true);
+        if (topCount > 0) {
+          div.find('.live_ratio').html(parseInt(event.count * 100 / topCount) + '%');
+        } else {
+          div.find('.live_ratio').html('');
+        }
+        if (event.previousCount > 0) {
+          div.find('.live_change_rate').html(parseInt(event.count * 100 / event.previousCount) + '%');
+        } else {
+          div.find('.live_change_rate').html('');
+        }
+        graphData = event.getGraphLiveData(true);
         _results.push(Graph.drawLineGraph(graphData, 'canvas' + event.name));
       }
       return _results;

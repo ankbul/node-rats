@@ -7,7 +7,9 @@ class RLive
     @timeSlice = timeSlice
 
   draw: (data) ->
-    topCount = data.count
+    topCount = -1
+    for event in data.events
+      topCount = Math.max(event.count, topCount)
 
     for event in data.events
       if $('#' + event.name ).length == 0
@@ -22,10 +24,17 @@ class RLive
 
       div.find('.live_count').html(event.count)
       div.find('.live_title').html(event.name)
-      div.find('.live_ratio').html( parseInt(event.count * 100 / topCount) + '%')
-      div.find('.live_change_rate').html( parseInt(event.count * 100 / event.previousCount) + '%')
+      if topCount > 0
+        div.find('.live_ratio').html( parseInt(event.count * 100 / topCount) + '%')
+      else
+        div.find('.live_ratio').html('')
 
-      graphData = event.getGraphData(true)
+      if event.previousCount > 0
+        div.find('.live_change_rate').html( parseInt(event.count * 100 / event.previousCount) + '%')
+      else
+        div.find('.live_change_rate').html( '')
+
+      graphData = event.getGraphLiveData(true)
       Graph.drawLineGraph graphData, 'canvas' + event.name
 
   addNextClick : (element, event) ->
