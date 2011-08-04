@@ -7,7 +7,7 @@ class TwitterDemo
     udp = new UdpSource()
     udp.loopback msg
 
-  @refreshUrls = {}
+  @refreshUrls = {'scopely': '?since_id=98932539414155267&q=scopely'}
 
   @searchTwitter: (keyword) ->
     options = {
