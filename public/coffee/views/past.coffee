@@ -16,6 +16,11 @@ class RPast
     graphData = rootEvent.getSubEventsGraphData(RView.NOW_DATA)
     Graph.drawLineGraph graphData, 'pastCanvas'
 
+    addClickHandler = (canvas) ->
+      div.click () ->
+        canvas.toggle()
+
+
     # Draw the expanded
     for event in rootEvent.events
       if $('#' + event.name ).length == 0
@@ -29,6 +34,8 @@ class RPast
         canvas.attr('width', 900  )
         canvas.attr('height', 1200)
         div.append(canvas)
+
+        addClickHandler(canvas)
 
         $('#data').append(div)
       else

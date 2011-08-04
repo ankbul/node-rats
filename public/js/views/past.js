@@ -5,7 +5,7 @@
     RPast.MAIN_GRAPH_WIDTH = 800;
     RPast.MAIN_GRAPH_HEIGHT = 450;
     RPast.prototype.draw = function(rootEvent) {
-      var canvas, div, event, graphData, _i, _len, _ref, _results;
+      var addClickHandler, canvas, div, event, graphData, _i, _len, _ref, _results;
       if ($('#pastCanvas').length === 0) {
         canvas = $('<canvas>');
         canvas.attr('id', 'pastCanvas');
@@ -15,6 +15,11 @@
       }
       graphData = rootEvent.getSubEventsGraphData(RView.NOW_DATA);
       Graph.drawLineGraph(graphData, 'pastCanvas');
+      addClickHandler = function(canvas) {
+        return div.click(function() {
+          return canvas.toggle();
+        });
+      };
       _ref = rootEvent.events;
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -29,6 +34,7 @@
           canvas.attr('width', 900);
           canvas.attr('height', 1200);
           div.append(canvas);
+          addClickHandler(canvas);
           $('#data').append(div);
         } else {
           div = $('#' + event.name);
