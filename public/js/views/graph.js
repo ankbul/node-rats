@@ -30,8 +30,10 @@
       graph.Set('chart.key.position.x', graph.Get('chart.gutter.left') + 4);
       graph.Set('chart.key.position.y', 5);
       graph.Set('chart.text.font', "Helvetica");
-      graph.Set('chart.text.size', 5);
-      graph.Set('chart.text.color', "#00c176");
+      graph.Set('chart.text.size', 8);
+      graph.Set('chart.text.color', "#999");
+      graph.Set('chart.fillstyle', "#00c176");
+      graph.Set('chart.tickmarks', "square");
       return graph.Draw();
     };
     Graph.drawBarGraph = function(graphData, canvasId) {

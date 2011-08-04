@@ -3,7 +3,7 @@
   Event = (function() {
     Event.getGraphColor = function() {
       var colors, index;
-      colors = ['#00c176)', '#ff0096', '#ff0096'];
+      colors = ['#00c176', '#ff0096', '#d1d400'];
       index = Math.floor(Math.random() * colors.length);
       return colors[index];
     };
