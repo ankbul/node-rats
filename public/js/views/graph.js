@@ -29,6 +29,11 @@
       graph.Set('chart.key.position', 'graph');
       graph.Set('chart.key.position.x', graph.Get('chart.gutter.left') + 4);
       graph.Set('chart.key.position.y', 5);
+      graph.Set('chart.text.font', "Helvetica");
+      graph.Set('chart.text.size', 8);
+      graph.Set('chart.text.color', "#999");
+      graph.Set('chart.fillstyle', "#00c176");
+      graph.Set('chart.tickmarks', "square");
       return graph.Draw();
     };
     Graph.drawBarGraph = function(graphData, canvasId) {
@@ -51,7 +56,8 @@
       graph.Set('chart.labels', tooltips);
       graph.Set('chart.colors', ['#1A87D5']);
       graph.Set('chart.background.grid', false);
-      graph.Set('chart.background.grid.vsize', 5);
+      graph.Set('chart.text.font', "Helvetica");
+      graph.Set('chart.text.size', 8);
       return graph.Draw();
     };
     return Graph;
