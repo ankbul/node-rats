@@ -24,28 +24,24 @@ socketManager.listen()
 
 
 
-
 # testing
 if false
 
   RedisSink = require('./lib/sinks/redis_sink').RedisSink
 
-  if true
-    #RedisSink.getLiveEventData(new View({timeSlice: TimeSlice.ONE_DAY, path:'popchat'}), (eventView) ->
-    #  console.log '[Server.coffee]', eventView, '!!!!!!!!!!!!!!!!', eventView.eventTree.events
-    #  eventView.eventTree.print()
-    #)
-    #RedisSink.getLiveEventData(new View({timeSlice: TimeSlice.ONE_DAY, path: 'popchat'}), (eventView) ->
-    #  console.log '[Server.coffee]', eventView, '!!!!!!!!!!!!!!!!', eventView.eventTree.events
-    #  eventView.eventTree.print()
-    #)
-
-    RedisSink.getRollingLiveEventData(new View({timeSlice: TimeSlice.TEN_MINUTES, path: 'popchat'}), (eventView) ->
+  testLiveEventData = () ->
+    RedisSink.getLiveEventData(new View({timeSlice: TimeSlice.ONE_DAY, path: 'popchat'}), (eventView) ->
       console.log '[Server.coffee]', eventView, '!!!!!!!!!!!!!!!!', eventView.eventTree.events
       eventView.eventTree.print()
     )
 
-  if false
+  testRollingEventData = () ->
+    RedisSink.getRollingLiveEventData(new View({timeSlice: TimeSlice.ONE_MINUTE, path: 'wallpost'}), (eventView) ->
+      #console.log '[Server.coffee]', eventView, '!!!!!!!!!!!!!!!!', eventView.eventTree.events
+      eventView.eventTree.print()
+    )
+
+  testHistoricalEventData = () ->
     historicalView = new View({timeSlice: TimeSlice.TEN_MINUTES, path:'popchat', type: 'historical', measurements: 20})
     RedisSink.getHistoricalEventData(historicalView, (eventView) ->
       console.log '[Server.coffee]', eventView
@@ -53,3 +49,9 @@ if false
         console.log event.measurements
     )
 
+  if true
+    testRollingEventData()
+    #setInterval(testRollingEventData, 5000)
+
+  if false
+    testHistoricalEventData()
