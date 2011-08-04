@@ -29,6 +29,9 @@
       graph.Set('chart.key.position', 'graph');
       graph.Set('chart.key.position.x', graph.Get('chart.gutter.left') + 4);
       graph.Set('chart.key.position.y', 5);
+      graph.Set('chart.text.font', "Helvetica");
+      graph.Set('chart.text.size', 5);
+      graph.Set('chart.text.color', "#00c176");
       return graph.Draw();
     };
     Graph.drawBarGraph = function(graphData, canvasId) {
@@ -54,6 +57,8 @@
       graph.Set('chart.shadow.offsety', 0);
       graph.Set('chart.shadow.blur', 15);
       graph.Set('chart.colors', ['red']);
+      graph.Set('chart.text.font', "Helvetica");
+      graph.Set('chart.text.size', 8);
       return graph.Draw();
     };
     return Graph;

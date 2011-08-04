@@ -3,7 +3,7 @@
   Event = (function() {
     Event.getGraphColor = function() {
       var colors, index;
-      colors = ['rgb(169, 222, 244)', '#3B5998', 'red'];
+      colors = ['#00c176)', '#ff0096', '#ff0096'];
       index = Math.floor(Math.random() * colors.length);
       return colors[index];
     };
@@ -86,50 +86,6 @@
         graphData.colors = ['#CCC'].concat(graphData.colors);
         graphData.legend = ['past'].concat(graphData.legend);
       }
-      return graphData;
-    };
-    Event.prototype.getSubEventsGraphData = function(type) {
-      var colors, ev, graphData, keys, measurements, results, t, tooltip, tooltips, _i, _j, _len, _len2, _ref, _ref2;
-      if (type == null) {
-        type = RView.ALL_DATA;
-      }
-      results = [];
-      tooltips = [];
-      keys = [];
-      colors = [];
-      _ref = this.events;
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        ev = _ref[_i];
-        measurements = ev.measurements.map(function(e) {
-          return e[1];
-        });
-        tooltip = ev.measurements.map(function(e) {
-          return e[0];
-        });
-        switch (type) {
-          case RView.NOW_DATA:
-            measurements = measurements.slice(0, measurements.length / 2);
-            tooltip = tooltip.slice(0, tooltip.length / 2);
-            break;
-          case RView.PAST_DATA:
-            measurements = measurements.slice(measurements.length / 2);
-            tooltip = tooltip.slice(tooltip.length / 2);
-        }
-        results.push(measurements.reverse());
-        _ref2 = tooltip.reverse();
-        for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
-          t = _ref2[_j];
-          tooltips.push(t);
-        }
-        keys.push(ev.path);
-        colors.push(ev.color);
-      }
-      graphData = {
-        data: results,
-        tooltips: tooltips,
-        legend: keys,
-        colors: colors
-      };
       return graphData;
     };
     return Event;
