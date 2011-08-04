@@ -21,6 +21,30 @@
         return this.gotEvents(data);
       }, this));
     };
+    RManager.prototype.bindBreadcrumClick = function(div, globalPath, path) {
+      var newPath;
+      newPath = globalPath + path + '/';
+      return div.click(__bind(function() {
+        return this.changePath(newPath);
+      }, this));
+    };
+    RManager.prototype.generateBreadCrums = function(path) {
+      var globalPath, li, paths, ul, _i, _len;
+      $('#breadcrums').empty();
+      paths = path.split('/');
+      paths = paths.slice(0, (paths.length - 2 + 1) || 9e9);
+      globalPath = '';
+      ul = $('<ul>');
+      for (_i = 0, _len = paths.length; _i < _len; _i++) {
+        path = paths[_i];
+        li = $('<li>');
+        this.bindBreadcrumClick(li, globalPath, path);
+        globalPath = globalPath + path + '/';
+        li.html(path + '/');
+        ul.append(li);
+      }
+      return $('#breadcrums').append(ul);
+    };
     RManager.prototype.goBack = function() {
       var path;
       path = this.historyStack.pop();
@@ -40,6 +64,9 @@
     };
     RManager.prototype.changeView = function(path, type, timeSlice) {
       var view;
+      if (path) {
+        this.generateBreadCrums(path);
+      }
       this.container.empty();
       this.eventData = null;
       this.eventView = null;

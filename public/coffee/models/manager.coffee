@@ -17,6 +17,26 @@ class RManager
     @socket.on Commands.EVENTS, (data) =>
       @gotEvents(data)
 
+  bindBreadcrumClick : (div, globalPath, path) ->
+    newPath = globalPath + path + '/'
+    div.click () =>
+      @changePath(newPath)
+
+  generateBreadCrums : (path) ->
+    $('#breadcrums').empty()
+    paths = path.split('/')
+    paths = paths[0..paths.length-2]
+
+    globalPath = ''
+    ul = $('<ul>')
+    for path in paths
+      li = $('<li>')
+      @bindBreadcrumClick(li, globalPath, path)
+      globalPath = globalPath + path + '/'
+      li.html(path + '/')
+      ul.append(li)
+    $('#breadcrums').append(ul)
+
   goBack : () ->
     path = @historyStack.pop()
     if (path == '') || (path != undefined)
@@ -33,6 +53,9 @@ class RManager
     @changeView null, type, null
 
   changeView: (path, type, timeSlice) ->
+    if path
+      @generateBreadCrums(path)
+
     @container.empty()
     @eventData = null
     @eventView = null
